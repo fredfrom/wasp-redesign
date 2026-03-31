@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wasp - Develop full-stack web apps faster</title>
+  <meta name="description" content="Rails-like framework for React, Node.js and Prisma. Build your app in a day and deploy it with a single CLI command.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+          colors: {
+            wasp: {
+              50: '#fefce8',
+              100: '#fef9c3',
+              200: '#fef08a',
+              300: '#fde047',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+            },
+            surface: {
+              0: '#09090b',
+              1: '#0c0c0e',
+              2: '#141416',
+              3: '#1a1a1e',
+              4: '#222226',
+              5: '#2a2a2e',
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #09090b;
+      color: #fafafa;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Background grid */
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(250,204,21,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(250,204,21,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+
+    /* Glows */
+    .glow-hero { background: radial-gradient(ellipse 900px 500px at 50% -50px, rgba(250,204,21,0.07), transparent 70%); }
+    .glow-section { background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(250,204,21,0.04), transparent 70%); }
+    .glow-cta { background: radial-gradient(ellipse 800px 400px at 50% 50%, rgba(250,204,21,0.06), transparent 70%); }
+
+    /* Code syntax */
+    .tk-kw { color: #c084fc; }
+    .tk-str { color: #86efac; }
+    .tk-cmt { color: #52525b; font-style: italic; }
+    .tk-prop { color: #93c5fd; }
+    .tk-type { color: #fde047; }
+    .tk-br { color: #52525b; }
+    .tk-fn { color: #67e8f9; }
+    .tk-bool { color: #fb923c; }
+    .tk-model { color: #f9a8d4; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+
+    /* Animations */
+    @keyframes fade-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-glow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    .anim-1 { animation: fade-up 0.5s ease-out forwards; }
+    .anim-2 { animation: fade-up 0.5s ease-out 0.08s forwards; opacity: 0; }
+    .anim-3 { animation: fade-up 0.5s ease-out 0.16s forwards; opacity: 0; }
+    .anim-4 { animation: fade-up 0.5s ease-out 0.24s forwards; opacity: 0; }
+    .anim-5 { animation: fade-up 0.5s ease-out 0.32s forwards; opacity: 0; }
+
+    /* Interactive */
+    .card { transition: border-color 0.15s ease, background 0.15s ease; border: 1px solid rgba(255,255,255,0.05); }
+    .card:hover { border-color: rgba(250,204,21,0.15); background: rgba(250,204,21,0.02); }
+    .nav-blur { backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%); }
+    .btn-primary { transition: all 0.15s ease; }
+    .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 0 24px rgba(250,204,21,0.25); }
+    .btn-ghost { transition: all 0.15s ease; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+    a, button { cursor: pointer; }
+
+    /* FAQ */
+    details summary { list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    details[open] summary .faq-chevron { transform: rotate(180deg); }
+    .faq-chevron { transition: transform 0.2s ease; }
+
+    /* Mobile menu */
+    #mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* Code tabs */
+    .code-tab { transition: all 0.15s ease; }
+    .code-tab.active { color: #facc15; background: rgba(250,204,21,0.1); }
+    .code-tab:not(.active):hover { color: #a1a1aa; }
+
+    /* Compilation diagram connector */
+    .connector { position: relative; }
+    .connector::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -1rem;
+      width: 2rem;
+      height: 2px;
+      background: linear-gradient(90deg, rgba(250,204,21,0.3), transparent);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ NAVIGATION ============ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 nav-blur bg-surface-0/80 border-b border-white/[0.05]">
+    <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2.5">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 14H12L11 22L19.5 10H12L13 2Z" fill="#facc15" stroke="#eab308" stroke-width="0.5"/></svg>
+        <span class="text-[15px] font-semibold tracking-tight text-white">Wasp</span>
+        <span class="text-[10px] font-medium text-zinc-600 bg-zinc-800/60 px-1.5 py-0.5 rounded">beta</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-7">
+        <a href="https://wasp.sh/docs" class="text-[13px] text-zinc-500 hover:text-white transition-colors">Docs</a>
+        <a href="https://wasp.sh/blog" class="text-[13px] text-zinc-500 hover:text-white transition-colors">Blog</a>
+        <a href="#faq" class="text-[13px] text-zinc-500 hover:text-white transition-colors">FAQ</a>
+        <a href="#signup" class="text-[13px] text-zinc-500 hover:text-white transition-colors">Join the list</a>
+      </div>
+
+      <!-- Desktop Actions -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="https://github.com/wasp-lang/wasp" class="flex items-center gap-1.5 text-[13px] text-zinc-500 hover:text-white transition-colors" aria-label="Star us on GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          <span>Star on GitHub</span>
+        </a>
+        <div class="flex items-center gap-2 ml-1">
+          <a href="https://discord.gg/rzdnErX" class="p-1.5 text-zinc-600 hover:text-white transition-colors" aria-label="Discord">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.74 19.74 0 003.677 4.37a.07.07 0 00-.032.028C.533 9.046-.32 13.58.099 18.058a.082.082 0 00.031.056 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.11 13.11 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.099.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.076.076 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.84 19.84 0 006.002-3.03.077.077 0 00.032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
+          </a>
+          <a href="https://twitter.com/WaspLang" class="p-1.5 text-zinc-600 hover:text-white transition-colors" aria-label="X / Twitter">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+        <a href="https://wasp.sh/docs/quick-start" class="btn-primary ml-1 inline-flex items-center gap-1.5 px-4 py-2 bg-wasp-400 text-surface-0 text-[13px] font-semibold rounded-lg">
+          Get Started
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Mobile toggle -->
+      <button onclick="document.getElementById('mobile-menu').classList.toggle('open')" class="md:hidden p-2 text-zinc-400" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden bg-surface-1 border-b border-white/[0.05] px-6">
+      <div class="flex flex-col gap-4 py-4">
+        <a href="https://wasp.sh/docs" class="text-sm text-zinc-400">Docs</a>
+        <a href="https://wasp.sh/blog" class="text-sm text-zinc-400">Blog</a>
+        <a href="#faq" class="text-sm text-zinc-400">FAQ</a>
+        <a href="#signup" class="text-sm text-zinc-400">Join the list</a>
+        <a href="https://wasp.sh/docs/quick-start" class="btn-primary inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-wasp-400 text-surface-0 text-sm font-semibold rounded-lg">Get Started</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <section class="relative min-h-[100dvh] flex items-center pt-16 bg-grid overflow-hidden">
+    <div class="glow-hero absolute inset-0 pointer-events-none"></div>
+    <div class="relative max-w-[1200px] mx-auto px-6 py-20 md:py-28 w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+        <!-- Left: Copy -->
+        <div>
+          <div class="anim-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/[0.06] bg-white/[0.02] mb-7">
+            <span class="text-[11px] text-zinc-500">Backed by</span>
+            <span class="text-[11px] font-bold text-wasp-400">Y Combinator</span>
+          </div>
+
+          <h1 class="anim-2 text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-[1.08] text-white mb-5">
+            Develop full-stack<br>web apps faster.
+          </h1>
+
+          <p class="anim-3 text-base lg:text-lg text-zinc-400 leading-relaxed mb-8 max-w-lg">
+            Rails-like framework for React, Node.js and Prisma. Build your app in a day and deploy it with a single CLI command.
+          </p>
+
+          <div class="anim-4 flex flex-wrap items-center gap-3 mb-10">
+            <a href="https://wasp.sh/docs/quick-start" class="btn-primary inline-flex items-center gap-2 px-5 py-2.5 bg-wasp-400 text-surface-0 font-semibold rounded-lg text-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 14H12L11 22L19.5 10H12L13 2Z"/></svg>
+              Get Started
+            </a>
+            <a href="https://wasp.sh/docs" class="btn-ghost inline-flex items-center gap-2 px-5 py-2.5 border border-white/[0.08] text-zinc-300 font-medium rounded-lg text-sm">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              Documentation
+            </a>
+          </div>
+
+          <div class="anim-5 flex items-center gap-6">
+            <span class="text-[11px] text-zinc-600 uppercase tracking-widest font-medium">Works with</span>
+            <div class="flex items-center gap-5">
+              <span class="flex items-center gap-1.5 text-zinc-500"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M14.23 12.004a2.236 2.236 0 01-2.235 2.236 2.236 2.236 0 01-2.236-2.236 2.236 2.236 0 012.235-2.236 2.236 2.236 0 012.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.31 0-.603.045-.867.131C3.84 2.16 2.94 4.273 3.53 7.448 1.46 8.152.05 9.222.05 10.463c0 1.24 1.41 2.31 3.48 3.015-.59 3.175.31 5.288 2.596 5.983.264.086.557.131.867.131 1.346 0 3.107-.96 4.888-2.622 1.78 1.653 3.541 2.602 4.887 2.602.31 0 .603-.045.867-.131 2.286-.695 3.187-2.808 2.596-5.983 2.07-.705 3.48-1.775 3.48-3.015 0-1.241-1.41-2.311-3.48-3.015.59-3.175-.31-5.288-2.596-5.983a2.14 2.14 0 00-.867-.131zM12 15.652a3.648 3.648 0 110-7.296 3.648 3.648 0 010 7.296z"/></svg><span class="text-[11px] font-medium">React</span></span>
+              <span class="flex items-center gap-1.5 text-zinc-500"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.998 24c-.321 0-.638-.084-.919-.244L8.06 21.93c-.437-.244-.224-.332-.08-.382.664-.232.797-.284 1.503-.687.074-.04.17-.024.245.02l2.316 1.375c.084.048.203.048.279 0l9.026-5.21c.084-.048.138-.143.138-.247V6.593c0-.107-.054-.2-.141-.25l-9.021-5.204a.288.288 0 00-.279 0L2.925 6.343c-.09.05-.142.145-.142.252v10.406c0 .103.052.198.138.245l2.473 1.427c1.341.672 2.163-.12 2.163-.909V7.44c0-.146.118-.265.265-.265h1.154c.144 0 .264.119.264.265v10.324c0 1.782-.97 2.806-2.66 2.806-.519 0-.928 0-2.07-.562l-2.369-1.363A1.85 1.85 0 011.22 17V6.593c0-.66.352-1.275.921-1.603l9.026-5.21a1.913 1.913 0 011.838 0l9.026 5.21c.569.328.921.943.921 1.603v10.406c0 .66-.352 1.275-.921 1.603l-9.026 5.21c-.28.16-.597.241-.919.241z"/></svg><span class="text-[11px] font-medium">Node.js</span></span>
+              <span class="flex items-center gap-1.5 text-zinc-500"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.807 18.285L13.553.756a1.324 1.324 0 00-1.129-.754 1.31 1.31 0 00-1.206.626l-2.04 3.537-.857-1.58a.63.63 0 00-1.093 0L2.196 18.29a.63.63 0 00.547.948h5.18c.45 0 .882-.242 1.086-.654l3.21-5.563 1.398 2.577-2.476 4.29a.63.63 0 00.547.948h9.83a.63.63 0 00.546-.948z"/></svg><span class="text-[11px] font-medium">Prisma</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Code -->
+        <div class="anim-5">
+          <div class="rounded-xl border border-white/[0.06] bg-surface-1 shadow-2xl shadow-black/40 overflow-hidden">
+            <!-- Window chrome -->
+            <div class="flex items-center justify-between border-b border-white/[0.05] px-4 py-2.5">
+              <div class="flex items-center gap-3">
+                <div class="flex gap-1.5">
+                  <div class="w-2.5 h-2.5 rounded-full bg-zinc-800"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-zinc-800"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-zinc-800"></div>
+                </div>
+                <div class="flex items-center gap-0.5">
+                  <button onclick="showTab('wasp')" id="tab-wasp" class="code-tab active px-2.5 py-1 text-[11px] font-medium rounded-md">todoApp.wasp</button>
+                  <button onclick="showTab('prisma')" id="tab-prisma" class="code-tab px-2.5 py-1 text-[11px] font-medium text-zinc-600 rounded-md">schema.prisma</button>
+                </div>
+              </div>
+              <a href="https://github.com/wasp-lang/wasp/blob/release/examples/tutorials/TodoAppTs/main.wasp" class="text-[10px] text-zinc-700 hover:text-zinc-400 transition-colors">View on GitHub</a>
+            </div>
+            <!-- Wasp code -->
+            <div id="code-wasp" class="p-5 overflow-x-auto">
+              <pre class="font-mono text-[13px] leading-[1.7]"><code><span class="tk-kw">app</span> <span class="tk-type">todoApp</span> <span class="tk-br">{</span>
+  <span class="tk-prop">title</span>: <span class="tk-str">"ToDo App"</span>,  <span class="tk-cmt">// visible in the browser tab</span>
+  <span class="tk-prop">auth</span>: <span class="tk-br">{</span> <span class="tk-cmt">// full-stack auth out-of-the-box</span>
+    <span class="tk-prop">userEntity</span>: <span class="tk-type">User</span>,
+    <span class="tk-prop">methods</span>: <span class="tk-br">{</span> <span class="tk-fn">google</span>: <span class="tk-br">{}</span>, <span class="tk-fn">gitHub</span>: <span class="tk-br">{}</span>, <span class="tk-fn">email</span>: <span class="tk-br">{</span>...<span class="tk-br">}</span> <span class="tk-br">}</span>
+  <span class="tk-br">}</span>
+<span class="tk-br">}</span>
+
+<span class="tk-kw">route</span> <span class="tk-type">RootRoute</span> <span class="tk-br">{</span> <span class="tk-prop">path</span>: <span class="tk-str">"/"</span>, <span class="tk-prop">to</span>: <span class="tk-type">MainPage</span> <span class="tk-br">}</span>
+<span class="tk-kw">page</span> <span class="tk-type">MainPage</span> <span class="tk-br">{</span>
+  <span class="tk-prop">authRequired</span>: <span class="tk-bool">true</span>, <span class="tk-cmt">// Limit access to logged in users.</span>
+  <span class="tk-prop">component</span>: <span class="tk-kw">import</span> <span class="tk-type">Main</span> <span class="tk-kw">from</span> <span class="tk-str">"@client/Main"</span> <span class="tk-cmt">// Your React code.</span>
+<span class="tk-br">}</span>
+
+<span class="tk-kw">query</span> <span class="tk-type">getTasks</span> <span class="tk-br">{</span>
+  <span class="tk-prop">fn</span>: <span class="tk-kw">import</span> <span class="tk-br">{</span> <span class="tk-fn">getTasks</span> <span class="tk-br">}</span> <span class="tk-kw">from</span> <span class="tk-str">"@server/tasks"</span>, <span class="tk-cmt">// Your Node.js code.</span>
+  <span class="tk-prop">entities</span>: <span class="tk-br">[</span><span class="tk-type">Task</span><span class="tk-br">]</span> <span class="tk-cmt">// Automatic cache invalidation.</span>
+<span class="tk-br">}</span></code></pre>
+            </div>
+            <!-- Prisma code -->
+            <div id="code-prisma" class="p-5 overflow-x-auto hidden">
+              <pre class="font-mono text-[13px] leading-[1.7]"><code><span class="tk-kw">model</span> <span class="tk-type">User</span> <span class="tk-br">{</span>
+  <span class="tk-prop">id</span>       <span class="tk-type">Int</span>     <span class="tk-fn">@id</span> <span class="tk-fn">@default</span>(<span class="tk-fn">autoincrement</span>())
+  <span class="tk-prop">tasks</span>    <span class="tk-type">Task</span>[]
+<span class="tk-br">}</span>
+
+<span class="tk-kw">model</span> <span class="tk-type">Task</span> <span class="tk-br">{</span>
+  <span class="tk-prop">id</span>          <span class="tk-type">Int</span>     <span class="tk-fn">@id</span> <span class="tk-fn">@default</span>(<span class="tk-fn">autoincrement</span>())
+  <span class="tk-prop">description</span> <span class="tk-type">String</span>
+  <span class="tk-prop">isDone</span>      <span class="tk-type">Boolean</span> <span class="tk-fn">@default</span>(<span class="tk-bool">false</span>)
+  <span class="tk-prop">user</span>        <span class="tk-type">User</span>    <span class="tk-fn">@relation</span>(<span class="tk-prop">fields</span>: [<span class="tk-prop">userId</span>], <span class="tk-prop">references</span>: [<span class="tk-prop">id</span>])
+  <span class="tk-prop">userId</span>      <span class="tk-type">Int</span>
+<span class="tk-br">}</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEATURES ============ -->
+  <section id="features" class="relative py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="glow-section absolute inset-0 pointer-events-none"></div>
+    <div class="relative max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Built-in features, zero boilerplate</h2>
+        <p class="text-zinc-500 max-w-lg mx-auto">Stop wiring together auth, CRUD, and deployment from scratch. Wasp handles the plumbing.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+
+        <a href="https://github.com/wasp-lang/wasp" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 00-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65S8.93 17.38 9 18v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Open Source</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Fully open-source and you're welcome to contribute!</p>
+        </a>
+
+        <a href="https://wasp.sh/blog/2023/04/12/auth-ui" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Full-stack Auth</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Social providers or email in a few lines. Powerful UI helpers. No vendor lock-in.</p>
+        </a>
+
+        <a href="https://wasp.sh/docs/data-model/operations/overview" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-purple-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">RPC (Client &lt;-&gt; Server)</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Typesafe RPC layer that instantly brings your data models and server logic to the client.</p>
+        </a>
+
+        <a href="https://wasp.sh/docs/deployment/intro" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-orange-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/><path d="m12 15-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Simple Deployment</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Deploy to any platform. CLI helpers for the most popular options.</p>
+        </a>
+
+        <a href="https://wasp.sh/docs/advanced/jobs" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-cyan-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Jobs</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Easily define, schedule and run specialized server tasks. Persistent, retryable, delayable.</p>
+        </a>
+
+        <a href="https://wasp.sh/docs/advanced/email" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-pink-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Email Sending</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">All you need to do is connect an email provider and you can send emails!</p>
+        </a>
+
+        <a href="https://wasp.sh/docs/tutorial/queries#implementing-a-query" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">Full-stack Type Safety</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Full TypeScript support with auto-generated types that span the whole stack.</p>
+        </a>
+
+        <a href="https://wasp.sh/docs" class="card group rounded-xl bg-surface-2/50 p-5">
+          <div class="w-9 h-9 rounded-lg bg-indigo-500/10 flex items-center justify-center mb-3.5">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+          <h3 class="text-[13px] font-semibold text-white mb-1">And More!</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">Custom API routes, database seeding, optimistic updates, automatic cache invalidation on the client.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <section id="how-it-works" class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-6">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">How does it work?</h2>
+      </div>
+      <p class="text-center text-zinc-400 max-w-2xl mx-auto mb-14 leading-relaxed">
+        Given a simple <code class="font-mono text-wasp-400 text-[13px] bg-wasp-400/10 px-1.5 py-0.5 rounded">.wasp</code> configuration file that describes the high-level details of your web app, and <code class="font-mono text-wasp-400 text-[13px] bg-wasp-400/10 px-1.5 py-0.5 rounded">.js(x)/.css/...</code> source files with your unique logic, Wasp compiler generates the full source of your web app in the target stack: front-end, back-end and deployment.
+      </p>
+      <p class="text-center text-zinc-300 text-sm font-medium mb-12">This unique approach is what makes Wasp "smart" and gives it its super powers!</p>
+
+      <!-- 4-column flow -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-xl border border-white/[0.06] bg-surface-2/50 p-5">
+          <div class="text-wasp-400 font-mono text-[11px] font-semibold mb-3">01</div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Simple config language</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed mb-3">Declaratively describe high-level details of your app.</p>
+          <a href="https://wasp.sh/docs/general/language" class="text-[11px] text-wasp-400 hover:underline">Learn more &rarr;</a>
+        </div>
+        <div class="rounded-xl border border-white/[0.06] bg-surface-2/50 p-5">
+          <div class="text-wasp-400 font-mono text-[11px] font-semibold mb-3">02</div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Wasp CLI</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed mb-3">All the handy commands at your fingertips.</p>
+          <a href="https://wasp.sh/docs/general/cli" class="text-[11px] text-wasp-400 hover:underline">Learn more &rarr;</a>
+        </div>
+        <div class="rounded-xl border border-white/[0.06] bg-surface-2/50 p-5">
+          <div class="text-wasp-400 font-mono text-[11px] font-semibold mb-3">03</div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">React / Node.js / Prisma</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed">You are still writing 90% of the code in your favorite technologies.</p>
+        </div>
+        <div class="rounded-xl border border-white/[0.06] bg-surface-2/50 p-5">
+          <div class="text-wasp-400 font-mono text-[11px] font-semibold mb-3">04</div>
+          <h3 class="text-sm font-semibold text-white mb-1.5">Goodbye boilerplate</h3>
+          <p class="text-[12px] text-zinc-500 leading-relaxed mb-3">Write only the code that matters, let Wasp handle the rest.</p>
+          <a href="https://www.youtube.com/watch?v=x5nsBbLvKnU" class="text-[11px] text-wasp-400 hover:underline">Watch video &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Compilation diagram -->
+      <div class="mt-12 rounded-xl border border-white/[0.06] bg-surface-2/30 p-6 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center">
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 rounded-lg bg-surface-3 px-4 py-3 border border-white/[0.04]">
+              <div class="w-2 h-2 rounded-full bg-wasp-400"></div>
+              <span class="font-mono text-[12px] text-zinc-300">todoApp.wasp</span>
+              <span class="text-[10px] text-zinc-600 ml-auto">config</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-surface-3 px-4 py-3 border border-white/[0.04]">
+              <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+              <span class="font-mono text-[12px] text-zinc-300">src/*.tsx</span>
+              <span class="text-[10px] text-zinc-600 ml-auto">React</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-surface-3 px-4 py-3 border border-white/[0.04]">
+              <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+              <span class="font-mono text-[12px] text-zinc-300">src/*.ts</span>
+              <span class="text-[10px] text-zinc-600 ml-auto">Node.js</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-surface-3 px-4 py-3 border border-white/[0.04]">
+              <div class="w-2 h-2 rounded-full bg-pink-400"></div>
+              <span class="font-mono text-[12px] text-zinc-300">schema.prisma</span>
+              <span class="text-[10px] text-zinc-600 ml-auto">DB</span>
+            </div>
+          </div>
+
+          <!-- Arrow + compiler -->
+          <div class="flex flex-col items-center gap-3">
+            <svg class="text-zinc-700 hidden md:block" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <div class="rounded-xl border border-wasp-400/20 bg-wasp-400/5 px-6 py-4 text-center">
+              <svg class="mx-auto mb-1.5" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#facc15" stroke-width="2"><path d="M13 2L4.5 14H12L11 22L19.5 10H12L13 2Z"/></svg>
+              <p class="text-[11px] font-bold text-wasp-400">Wasp Compiler</p>
+            </div>
+            <svg class="text-zinc-700 hidden md:block" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+
+          <!-- Output -->
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 rounded-lg bg-emerald-500/5 px-4 py-3 border border-emerald-500/10">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-[12px] text-zinc-300">React Frontend</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-emerald-500/5 px-4 py-3 border border-emerald-500/10">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-[12px] text-zinc-300">Node.js Backend</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-emerald-500/5 px-4 py-3 border border-emerald-500/10">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-[12px] text-zinc-300">Database Migrations</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-lg bg-emerald-500/5 px-4 py-3 border border-emerald-500/10">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span class="text-[12px] text-zinc-300">Deployment Config</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXAMPLES ============ -->
+  <section id="examples" class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Show, don't tell.</h2>
+        <p class="text-zinc-500">Take a look at examples &mdash; see how things work and get inspired for your next project.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="card rounded-xl bg-surface-2/40 overflow-hidden">
+          <div class="aspect-[16/10] bg-gradient-to-br from-emerald-900/20 to-surface-3 flex items-center justify-center">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3f3f46" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white mb-1">Todo App (TypeScript)</h3>
+            <p class="text-[12px] text-zinc-500 mb-4">A famous To-Do list app, implemented in TypeScript.</p>
+            <div class="flex items-center gap-2">
+              <a href="https://github.com/wasp-lang/wasp/tree/release/examples/tutorials/TodoAppTs" class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                See the code
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl bg-surface-2/40 overflow-hidden">
+          <div class="aspect-[16/10] bg-gradient-to-br from-violet-900/20 to-surface-3 flex items-center justify-center">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3f3f46" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white mb-1">CoverLetterGPT</h3>
+            <p class="text-[12px] text-zinc-500 mb-4">Generate cover letters based on your CV and the job description. Powered by ChatGPT.</p>
+            <div class="flex items-center gap-3">
+              <a href="https://github.com/vincanger/coverlettergpt" class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                See the code
+              </a>
+              <a href="https://coverlettergpt.xyz/" class="text-[11px] font-medium text-wasp-400 hover:underline">Demo</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card rounded-xl bg-surface-2/40 overflow-hidden">
+          <div class="aspect-[16/10] bg-gradient-to-br from-blue-900/20 to-surface-3 flex items-center justify-center">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3f3f46" stroke-width="1.5"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white mb-1">Realtime Voting via WebSockets</h3>
+            <p class="text-[12px] text-zinc-500 mb-4">A realtime, websockets-powered voting app built with Wasp and TypeScript.</p>
+            <div class="flex items-center gap-3">
+              <a href="https://github.com/wasp-lang/wasp/tree/release/examples/websockets-realtime-voting" class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-400 hover:text-white transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                See the code
+              </a>
+              <a href="https://websockets-voting-client.fly.dev/login" class="text-[11px] font-medium text-wasp-400 hover:underline">Demo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="https://github.com/wasp-lang/wasp/tree/release/examples" class="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-white transition-colors">
+          See all examples <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">You're in good company</h2>
+        <p class="text-zinc-500">Here's what folks using Wasp say about it. Join <a href="https://discord.gg/rzdnErX" class="text-wasp-400 hover:underline">our Discord</a> for more!</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="https://www.producthunt.com/posts/wasp-lang-beta?comment=2048094" class="card rounded-xl bg-surface-2/40 p-6 block group">
+          <p class="text-[13px] text-zinc-300 leading-relaxed mb-5">"I spent the one weekend building with Wasp and it was amazing, a real pleasure. I normally develop in Vue.js, but in a weekend I had time to learn Wasp, React and finish a full-stack app (only missing styling). This would have been impossible before. So glad to see Wasp in Beta!"</p>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-surface-4 flex items-center justify-center text-[10px] font-bold text-wasp-400">JR</div>
+              <div>
+                <p class="text-[12px] font-semibold text-white">Joan Reyero</p>
+                <p class="text-[11px] text-zinc-600">@joanreyero</p>
+              </div>
+            </div>
+            <span class="text-[10px] text-zinc-700">Product Hunt</span>
+          </div>
+        </a>
+
+        <a href="https://twitter.com/tskaggs/status/1602513968207101954" class="card rounded-xl bg-surface-2/40 p-6 block group">
+          <p class="text-[13px] text-zinc-300 leading-relaxed mb-5">"The simplification of the main.wasp file is great. And it feels like a very light weight version of a few larger frameworks."</p>
+          <div class="flex items-center justify-between mt-auto">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-surface-4 flex items-center justify-center text-[10px] font-bold text-wasp-400">TS</div>
+              <div>
+                <p class="text-[12px] font-semibold text-white">Tim</p>
+                <p class="text-[11px] text-zinc-600">@tskaggs</p>
+              </div>
+            </div>
+            <span class="text-[10px] text-zinc-700">Twitter</span>
+          </div>
+        </a>
+
+        <a href="https://twitter.com/AttilaTheDev/status/1583530646047117317" class="card rounded-xl bg-surface-2/40 p-6 block group">
+          <p class="text-[13px] text-zinc-300 leading-relaxed mb-5">"@WaspLang has been in the back of my mind for months now. It left an impression, and I'm really not easy to impress. That's gotta mean something&hellip;"</p>
+          <div class="flex items-center justify-between mt-auto">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-full bg-surface-4 flex items-center justify-center text-[10px] font-bold text-wasp-400">AV</div>
+              <div>
+                <p class="text-[12px] font-semibold text-white">Attila Vago</p>
+                <p class="text-[11px] text-zinc-600">@AttilaTheDev</p>
+              </div>
+            </div>
+            <span class="text-[10px] text-zinc-700">Twitter</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOWCASE ============ -->
+  <section class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Showcase Gallery</h2>
+        <p class="text-zinc-500">See what others are building with Wasp.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <a href="https://wasp.sh/blog/2022/10/28/farnance-hackathon-winner" class="card rounded-xl bg-surface-2/40 overflow-hidden block group">
+          <div class="aspect-[16/10] bg-gradient-to-br from-green-900/30 to-surface-3 flex items-center justify-center">
+            <div class="text-center"><p class="text-base font-bold text-white">Farnance</p><p class="text-[11px] text-zinc-500 mt-1">SaaS marketplace for farmers</p></div>
+          </div>
+          <div class="p-5">
+            <p class="text-[12px] text-zinc-500 mb-3">See how Julian won HackLBS 2021 among 250 participants and why Wasp was instrumental for the team's victory.</p>
+            <div class="flex gap-1.5">
+              <span class="text-[10px] text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">hackathon</span>
+              <span class="text-[10px] text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">material-ui</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="https://wasp.sh/blog/2022/11/26/michael-curry-usecase" class="card rounded-xl bg-surface-2/40 overflow-hidden block group">
+          <div class="aspect-[16/10] bg-gradient-to-br from-blue-900/30 to-surface-3 flex items-center justify-center">
+            <div class="text-center"><p class="text-base font-bold text-white">Grabbit</p><p class="text-[11px] text-zinc-500 mt-1">Manage dev environments</p></div>
+          </div>
+          <div class="p-5">
+            <p class="text-[12px] text-zinc-500 mb-3">See how Michael built and deployed an internal tool for managing dev resources at StudentBeans.</p>
+            <span class="text-[10px] text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">internal-tools</span>
+          </div>
+        </a>
+
+        <a href="https://wasp.sh/blog/2022/11/26/erlis-amicus-usecase" class="card rounded-xl bg-surface-2/40 overflow-hidden block group">
+          <div class="aspect-[16/10] bg-gradient-to-br from-purple-900/30 to-surface-3 flex items-center justify-center">
+            <div class="text-center"><p class="text-base font-bold text-white">Amicus</p><p class="text-[11px] text-zinc-500 mt-1">Legal workflow management</p></div>
+          </div>
+          <div class="p-5">
+            <p class="text-[12px] text-zinc-500 mb-3">See how Erlis rolled out fully-fledged SaaS as a team of one in record time and got first paying customers.</p>
+            <div class="flex gap-1.5">
+              <span class="text-[10px] text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">startup</span>
+              <span class="text-[10px] text-zinc-500 bg-white/[0.04] px-2 py-0.5 rounded-full">material-ui</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEWSLETTER ============ -->
+  <section id="signup" class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-lg mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Stay up to date</h2>
+      <p class="text-zinc-500 mb-8">Be the first to know when we ship new features and updates!</p>
+      <form class="flex flex-col sm:flex-row gap-2.5" onsubmit="return false;">
+        <label for="email" class="sr-only">Email</label>
+        <input id="email" type="email" placeholder="you@awesomedev.com" required class="flex-1 px-4 py-2.5 bg-surface-2 border border-white/[0.06] rounded-lg text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-wasp-400/30 focus:ring-1 focus:ring-wasp-400/20 transition-all">
+        <button type="submit" class="btn-primary px-6 py-2.5 bg-wasp-400 text-surface-0 font-semibold rounded-lg text-sm whitespace-nowrap">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ ROADMAP ============ -->
+  <section class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Roadmap</h2>
+      <p class="text-zinc-500 mb-8">Work on Wasp never stops: <a href="https://github.com/orgs/wasp-lang/projects/5" class="text-wasp-400 hover:underline">get a glimpse</a> of what is coming next!</p>
+      <a href="https://github.com/orgs/wasp-lang/projects/5" class="btn-ghost inline-flex items-center gap-2 px-6 py-2.5 border border-white/[0.08] text-zinc-300 font-medium rounded-lg text-sm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        View Roadmap on GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section id="faq" class="py-24 md:py-32 border-t border-white/[0.04]">
+    <div class="max-w-3xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-3">Frequently asked questions</h2>
+        <p class="text-zinc-500">For anything not covered here, join <a href="https://discord.gg/rzdnErX" class="text-wasp-400 hover:underline">our Discord</a>!</p>
+      </div>
+
+      <div class="space-y-2.5">
+        <details class="group rounded-xl border border-white/[0.06] bg-surface-2/40" open>
+          <summary class="flex items-center justify-between px-5 py-4 select-none">
+            <span class="text-[13px] font-medium text-white pr-4">How is Wasp different from Next.js / Nuxt.js / Gatsby?</span>
+            <svg class="faq-chevron w-4 h-4 text-zinc-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="px-5 pb-4">
+            <p class="text-[13px] text-zinc-400 leading-relaxed"><strong class="text-zinc-300">TL;DR</strong> &mdash; These are frontend-first frameworks, with some limited backend capabilities. Wasp is a full-stack framework.</p>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mt-2">The main difference is that Wasp is a truly full-stack framework, meaning it brings both back-end and database next to the front-end. You can think of it as Ruby on Rails, but for JS (React &amp; Node.js). Next.js, Gatsby and others started as frontend frameworks for static sites. Although some now offer serverless functions, you still have to bring your own database and a server for complex operations.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-white/[0.06] bg-surface-2/40">
+          <summary class="flex items-center justify-between px-5 py-4 select-none">
+            <span class="text-[13px] font-medium text-white pr-4">How is Wasp different from Ruby on Rails or Django?</span>
+            <svg class="faq-chevron w-4 h-4 text-zinc-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="px-5 pb-4">
+            <p class="text-[13px] text-zinc-400 leading-relaxed"><strong class="text-zinc-300">TL;DR</strong> &mdash; While Rails and Django are full-stack, they require extra work for the modern "desktop" experience most web apps offer today. Wasp supports that out-of-the-box.</p>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mt-2">Rails and Django allow you to write backend code and generate HTML/CSS, but they don't natively support client-side DOM manipulation needed for dynamic content (dashboards, realtime updates). With Wasp you get that out of the box, plus automatic data model sharing between database, frontend and backend &mdash; no custom REST or GraphQL API needed.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-white/[0.06] bg-surface-2/40">
+          <summary class="flex items-center justify-between px-5 py-4 select-none">
+            <span class="text-[13px] font-medium text-white pr-4">How hard is it to learn Wasp?</span>
+            <svg class="faq-chevron w-4 h-4 text-zinc-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="px-5 pb-4">
+            <p class="text-[13px] text-zinc-400 leading-relaxed">We measured! <strong class="text-zinc-300">It takes about 30 minutes to get going</strong>, and most users find it pretty straightforward. Since the majority of your coding is still done with React &amp; Node.js, it's a marginal change to what you're used to.</p>
+            <p class="text-[13px] text-zinc-400 leading-relaxed mt-2">The Wasp config language is intentionally simple &mdash; no loops or variables, think of it as JSON that is easier to read and a bit smarter. And you get all the IDE goodies: syntax highlighting, auto-completion, live error reporting.</p>
+          </div>
+        </details>
+
+        <details class="group rounded-xl border border-white/[0.06] bg-surface-2/40">
+          <summary class="flex items-center justify-between px-5 py-4 select-none">
+            <span class="text-[13px] font-medium text-white pr-4">Do you support only React & Node.js currently?</span>
+            <svg class="faq-chevron w-4 h-4 text-zinc-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+          </summary>
+          <div class="px-5 pb-4">
+            <p class="text-[13px] text-zinc-400 leading-relaxed">Yes, that is currently the supported stack. But Wasp is being developed as a language/framework and architecture-agnostic tool, so we plan to add support for more languages and frameworks in the future. The compiler architecture is designed for it.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="relative py-24 md:py-32 border-t border-white/[0.04] overflow-hidden">
+    <div class="glow-cta absolute inset-0 pointer-events-none"></div>
+    <div class="relative max-w-[1200px] mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-5">Start building today</h2>
+      <p class="text-lg text-zinc-400 mb-10 max-w-md mx-auto">Go from idea to production in a weekend, not a quarter.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="https://wasp.sh/docs/quick-start" class="btn-primary inline-flex items-center gap-2 px-7 py-3 bg-wasp-400 text-surface-0 font-semibold rounded-lg">
+          Get Started
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="https://github.com/wasp-lang/wasp" class="btn-ghost inline-flex items-center gap-2 px-7 py-3 border border-white/[0.08] text-zinc-300 font-medium rounded-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="border-t border-white/[0.04] py-16">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <!-- Brand -->
+        <div class="col-span-2">
+          <div class="flex items-center gap-2 mb-4">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 14H12L11 22L19.5 10H12L13 2Z" fill="#facc15" stroke="#eab308" stroke-width="0.5"/></svg>
+            <span class="text-sm font-semibold text-white">Wasp</span>
+          </div>
+          <p class="text-[12px] text-zinc-600 leading-relaxed max-w-[240px] mb-4">The fastest way to develop full-stack web apps with React &amp; Node.js.</p>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-[11px] text-zinc-600">Backed by</span>
+            <span class="text-[11px] font-bold text-wasp-400">Y Combinator</span>
+          </div>
+          <!-- Footer newsletter -->
+          <form class="flex gap-2 max-w-[280px]" onsubmit="return false;">
+            <label for="footer-email" class="sr-only">Email</label>
+            <input id="footer-email" type="email" placeholder="you@awesomedev.com" class="flex-1 min-w-0 px-3 py-1.5 bg-surface-2 border border-white/[0.06] rounded-md text-[11px] text-white placeholder:text-zinc-700 focus:outline-none focus:border-wasp-400/30 transition-colors">
+            <button type="submit" class="btn-primary px-3 py-1.5 bg-wasp-400 text-surface-0 font-semibold rounded-md text-[11px] whitespace-nowrap">Subscribe</button>
+          </form>
+        </div>
+
+        <!-- Docs -->
+        <div>
+          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-3">Docs</h4>
+          <ul class="space-y-2">
+            <li><a href="https://wasp.sh/docs" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Getting Started</a></li>
+            <li><a href="https://wasp.sh/docs/tutorial/create" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Todo app tutorial</a></li>
+            <li><a href="https://wasp.sh/docs/general/language" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Language reference</a></li>
+          </ul>
+        </div>
+
+        <!-- Community -->
+        <div>
+          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-3">Community</h4>
+          <ul class="space-y-2">
+            <li><a href="https://discord.gg/rzdnErX" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Discord</a></li>
+            <li><a href="https://x.com/WaspLang" class="text-[12px] text-zinc-600 hover:text-white transition-colors">X / Twitter</a></li>
+            <li><a href="https://bsky.app/profile/wasp.sh" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Bluesky</a></li>
+            <li><a href="https://github.com/wasp-lang/wasp" class="text-[12px] text-zinc-600 hover:text-white transition-colors">GitHub</a></li>
+          </ul>
+        </div>
+
+        <!-- Company -->
+        <div>
+          <h4 class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-3">Company</h4>
+          <ul class="space-y-2">
+            <li><a href="https://wasp.sh/blog" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Blog</a></li>
+            <li><a href="https://wasp-lang.notion.site/Wasp-Careers-59fd1682c80d446f92be5fa65cc17672" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Careers</a></li>
+            <li><a href="https://wasp.sh/resources" class="text-[12px] text-zinc-600 hover:text-white transition-colors">Resources</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-white/[0.04] pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-[11px] text-zinc-700">&copy; Wasp, Inc. All rights reserved.</p>
+        <a href="https://wasp.sh/privacy-policy" class="text-[11px] text-zinc-700 hover:text-zinc-400 transition-colors">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function showTab(tab) {
+      document.getElementById('code-wasp').classList.toggle('hidden', tab !== 'wasp');
+      document.getElementById('code-prisma').classList.toggle('hidden', tab !== 'prisma');
+      document.getElementById('tab-wasp').classList.toggle('active', tab === 'wasp');
+      document.getElementById('tab-prisma').classList.toggle('active', tab === 'prisma');
+      document.getElementById('tab-wasp').classList.toggle('text-zinc-600', tab !== 'wasp');
+      document.getElementById('tab-prisma').classList.toggle('text-zinc-600', tab !== 'prisma');
+    }
+  </script>
+</body>
+</html>

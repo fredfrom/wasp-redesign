@@ -57,10 +57,46 @@ const testimonials = [
 ]
 
 const faqs = [
-  { q: 'How is Wasp different from Next.js / Nuxt.js / Gatsby?', a: 'These are frontend-first frameworks with some limited backend capabilities. Wasp is a truly full-stack framework \u2014 it brings both back-end and database next to the front-end. Think Ruby on Rails, but for React & Node.js.' },
-  { q: 'How is Wasp different from Ruby on Rails or Django?', a: "While Rails and Django are full-stack, they require extra work for the modern \"desktop\" experience most web apps offer today. Wasp supports that out-of-the-box with React on the frontend, plus automatic data model sharing between database, frontend, and backend." },
-  { q: 'How hard is it to learn Wasp?', a: "About 30 minutes to get going. The config language is intentionally simple \u2014 no loops or variables, think JSON that's easier to read. 90% of your code is still React & Node.js." },
-  { q: 'Do you support only React & Node.js currently?', a: "Yes, but Wasp is designed to be framework-agnostic. The compiler architecture supports adding more languages and frameworks in the future." },
+  {
+    q: 'How is Wasp different from Next.js / Nuxt.js / Gatsby?',
+    a: "These are frontend-first frameworks with some limited backend capabilities. Wasp is a truly full-stack framework \u2014 it brings both back-end and database next to the front-end. You can think of it as Ruby on Rails, but for React & Node.js. Next.js, Gatsby and others started as frontend frameworks for static sites. Although some now offer serverless functions, you still have to bring your own database and you'll need a separate backend for complex operations like background jobs, auth flows, or email sending."
+  },
+  {
+    q: 'How is Wasp different from Ruby on Rails or Django?',
+    a: "Rails and Django are full-stack, but they require extra work for the modern single-page app experience most web apps offer today \u2014 think expanding a post on Twitter or dragging a Trello card without the whole page reloading. Wasp supports this out-of-the-box with React on the frontend. One of the biggest time savers is automatic sharing of data models between the database, frontend, and backend \u2014 with Rails or Django you'd typically have to implement a custom REST or GraphQL API, while with Wasp you can skip that step entirely."
+  },
+  {
+    q: 'How hard is it to learn Wasp?',
+    a: "We measured \u2014 it takes about 30 minutes to get going, and most users find it pretty straightforward. Since the majority of your coding is still done with React & Node.js, it's a marginal change to what you're used to. The Wasp config language is intentionally simple: no loops, no variables \u2014 think of it as a JSON that's easier to read and a bit smarter. You get full IDE support too: syntax highlighting, auto-completion, and live error reporting."
+  },
+  {
+    q: 'Do you support only React & Node.js currently?',
+    a: "Yes, that is currently the supported stack. But Wasp is being developed as a language/framework and architecture-agnostic tool, so we plan to add support for more languages and frameworks in the future. This is something we're pretty excited about and think could be a unique opportunity due to the compiler approach we're taking."
+  },
+  {
+    q: 'How does Wasp work with AI coding tools like Claude Code or Cursor?',
+    a: "Wasp's declarative config acts as a high-level specification that both you and AI tools already understand. In benchmarks, Claude Code used 38% fewer tokens and cost 44% less building the same feature in Wasp vs Next.js. There's also an official Wasp plugin for Claude Code with slash commands like /add-feature and /deploying-app that give AI deep framework knowledge. Less code to read and write means fewer hallucinations, faster results, and lower cost."
+  },
+  {
+    q: 'What is OpenSaaS and how does it relate to Wasp?',
+    a: "OpenSaaS is a free, open-source SaaS starter template built on Wasp. It comes pre-configured with Stripe/Polar.sh/Lemon Squeezy payments, an Astro-powered blog with SEO, an admin dashboard with analytics, AWS S3 file uploads, email sending, and cron jobs. It's used in production by companies like Kivo, Searchcraft, and Prompt Panda. Think of it as the fastest path from zero to a production SaaS \u2014 just add your business logic."
+  },
+  {
+    q: 'How does deployment work?',
+    a: "One command: wasp deploy fly deploy ships your entire app \u2014 frontend, backend, and database \u2014 to Fly.io. Wasp generates the Dockerfiles, configs, and handles secrets for you. You can also deploy to Railway, or self-host anywhere Node.js runs. For the frontend, you can optionally use Netlify or any static host. There's no vendor lock-in because you own all the generated code."
+  },
+  {
+    q: 'How does the database and Prisma integration work?',
+    a: "You define your data models once in schema.prisma and Wasp handles everything else. Run wasp start db to spin up a managed PostgreSQL in Docker. Run wasp db migrate-dev to apply schema changes as migrations. Run wasp db studio to browse your data visually in Prisma Studio. Run wasp db seed to populate test data. The types from your Prisma schema automatically flow through to your server operations and React components \u2014 full end-to-end type safety with zero manual type definitions."
+  },
+  {
+    q: 'What auth methods are supported?',
+    a: "Wasp supports username/password, email (with built-in email verification and password reset flows), Google, GitHub, Discord, Slack, Microsoft, and Keycloak. All you need is a few lines in main.wasp \u2014 Wasp generates the login/signup UI, handles session management, OAuth token exchange, CSRF protection, and auth middleware. You can use SMTP, Mailgun, or SendGrid for sending verification and reset emails."
+  },
+  {
+    q: 'Is Wasp production-ready?',
+    a: "Yes. Wasp is used in production by startups and companies that have won hackathons, raised funding, and acquired paying customers. The OpenSaaS template alone has dozens of production apps built on it. Wasp is backed by Y Combinator and has an active open-source community. The framework is in beta, meaning the API may still evolve, but the core is stable and battle-tested."
+  },
 ]
 
 // ─── Code Comparisons (the big value prop) ──────────────
@@ -755,6 +791,44 @@ export const MainPage = () => {
 
       {/* ── Code Comparisons ── */}
       <CodeComparison />
+
+      {/* ── OpenSaaS ── */}
+      <section className={`py-28 md:py-36 border-t ${t.sec} overflow-hidden`}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div className="text-center mb-16">
+            <span className={`text-[11px] font-semibold ${t.accent} uppercase tracking-[0.15em] mb-3 block`}>Starter Template</span>
+            <h2 className={`text-3xl md:text-[2.5rem] font-bold tracking-tight ${t.h} mb-4`}>Go to production in days, not months</h2>
+            <p className={`${t.m} max-w-2xl mx-auto text-[15px] leading-relaxed`}>
+              <a href="https://opensaas.sh" target="_blank" rel="noreferrer" className={`${t.accent} font-semibold hover:underline`}>OpenSaaS</a> is a free, open-source SaaS starter built on Wasp. Payments, auth, admin dashboard, blog — all pre-wired. Just add your idea.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            {[
+              { title: 'Stripe / Polar.sh / Lemon Squeezy', desc: 'Pre-configured checkout sessions and webhooks. Choose your payment provider and start charging from day one.', icon: '💳' },
+              { title: 'Blog with Astro', desc: 'Built-in blog powered by Astro. Write posts in Markdown with automatic SEO optimization and fast static pages.', icon: '📝' },
+              { title: 'Admin Dashboard', desc: 'Analytics with Plausible or Google, user management tables, revenue graphs — all in one admin panel.', icon: '📊' },
+              { title: 'File Uploads (S3)', desc: 'AWS S3 presigned URL file uploads, fully documented with working examples out of the box.', icon: '📁' },
+              { title: 'Email + Cron Jobs', desc: 'Email sending built-in with multiple providers. Combine with scheduled cron jobs for automated customer emails.', icon: '📧' },
+              { title: 'AI-Ready', desc: 'Opinionated defaults and custom agent rules for AI coding tools. The perfect stack for building with AI assistance.', icon: '🤖' },
+            ].map(item => (
+              <div key={item.title} className={`card p-6`}>
+                <span className="text-2xl mb-3 block">{item.icon}</span>
+                <h3 className={`text-[14px] font-semibold ${t.h} mb-2`}>{item.title}</h3>
+                <p className={`text-[13px] ${t.m} leading-relaxed`}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <p className={`text-[13px] ${t.p} mb-6`}>Used in production by Microinfluencers, Kivo, Searchcraft, Scribeist, Prompt Panda, Review Radar, and more.</p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a href="https://opensaas.sh" target="_blank" rel="noreferrer" className="btn-primary px-6 py-2.5 text-sm">Try OpenSaaS</a>
+              <a href="https://docs.opensaas.sh" target="_blank" rel="noreferrer" className="btn-ghost px-6 py-2.5 text-sm"><BookIcon /> Documentation</a>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── AI Efficiency ── */}
       <section className={`py-28 md:py-36 border-t ${t.sec}`}>

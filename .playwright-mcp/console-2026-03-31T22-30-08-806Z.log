@@ -1,0 +1,35 @@
+[      65ms] [INFO] Resource Sentinel initialized... @ https://wasp-lang.notion.site/Wasp-Careers-59fd1682c80d446f92be5fa65cc17672:0
+[     539ms] [INFO] 2026-03-31T22:30:09.344Z [info] FeatureFlagTransactionQueue: preferIndexedDB {team: no-team-specified} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[     677ms] [INFO] 2026-03-31T22:30:09.478Z [info] appHelpers: shouldShowError {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[     688ms] [INFO] 2026-03-31T22:30:09.493Z [info] appHelpers: shouldShowError {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[     710ms] [LOG] %c
+	nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	nnnn                         nnnn
+	nnnnnnn                          nnnn
+	nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn
+	nnnnnnnn                           nnn
+	nnnnnnnn    nnnnnnnn     nnnnnnn   nnn
+	nnnnnnnn      nnnnnnn      nnn     nnn
+	nnnnnnnn      nnnnnnnn     nnn     nnn
+	nnnnnnnn      nnnnnnnnnn   nnn     nnn
+	nnnnnnnn      nnn nnnnnnn  nnn     nnn
+	nnnnnnnn      nnn  nnnnnnnnnnn     nnn
+	nnnnnnnn      nnn   nnnnnnnnnn     nnn
+	nnnnnnnn      nnn     nnnnnnnn     nnn
+	nnnnnnnn      nnn      nnnnnnn     nnn
+	nnnnnnnn    nnnnnnnn    nnnnnn     nnn
+	  nnnnnn                           nnn
+		nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn		We're hiring!
+		  nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn		notion.so/careers
+
+	“yeah, I would probably eat a lemon for one hundred dollars” -- Ivan Zhao (2023-07-14)
+				  font-family: monospace @ https://wasp-lang.notion.site/_assets/mainApp-30fa67c10e4504fd.js:0
+[     927ms] [INFO] 2026-03-31T22:30:09.733Z [info] PageLoader: loserAborted {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[    1142ms] [WARNING] Ignoring inability to install OPFS sqlite3_vfs: Cannot install OPFS: Missing SharedArrayBuffer and/or Atomics. The server must emit the COOP/COEP response headers to enable those. See https://sqlite.org/wasm/doc/trunk/persistence.md#coop-coep @ https://wasp-lang.notion.site/_assets/wasm-sqlite-worker-f2a58d8eec8320f4.js:0
+[    1267ms] [INFO] 2026-03-31T22:30:10.073Z [error] handleRestrictedStateForResponse: callApi {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[    1654ms] [WARNING] Amplitude Logger [Warn]: Event not tracked, no destination plugins on the instance @ https://wasp-lang.notion.site/_assets/transport-support-e7d414a1cfeb3949.js:1
+[    1656ms] [INFO] 2026-03-31T22:30:10.462Z [error] eventTrailApiHelpers: trackFailure {error: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[    1767ms] [INFO] 2026-03-31T22:30:10.573Z [error] handleRestrictedStateForResponse: callApi {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[    2134ms] [INFO] 2026-03-31T22:30:10.939Z [info] sqliteSchemaHelpers: attemptFastForwardMigration {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71
+[    2304ms] [INFO] 2026-03-31T22:30:11.110Z [info] sqliteSchemaHelpers: successfulFastForwardMigration {data: Object} @ https://wasp-lang.notion.site/_assets/app-7f506d0a92b60e94.js:71

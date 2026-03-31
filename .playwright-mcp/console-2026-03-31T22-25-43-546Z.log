@@ -1,0 +1,106 @@
+[  339860ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-FNPS55QW.js?v=40e7fec4:21608
+[  339951ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=f0658901:4435
+[  462452ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/935d8b4a.0b9b80ff.js:0
+[  462452ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/9e53cdee.72eae01a.js:0
+[  462452ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/fccb6290.ce82577e.js:0
+[  462452ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/74e80607.f02f7520.js:0
+[  462452ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c6f9bdf6.c778effd.js:0
+[  462453ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c9ed1476.727c72de.js:0
+[  462453ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/15e3b795.f0c911d5.js:0
+[  462453ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/d59842f7.8d69a9e6.js:0
+[  462453ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/f6c6ce6b.10955701.js:0
+[  462453ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/54d61a2f.0d33eb5e.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0e18cb31.d5e9e0e2.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/b170546b.04a7d702.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/337a83ca.f86bd624.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/a470d36e.66d94639.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/588648ec.0b7cc875.js:0
+[  462454ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0c929b3a.1fbecca6.js:0
+[  462455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/de41cbd3.d96e5a98.js:0
+[  462455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/91ce7d42.dc76846b.js:0
+[  462455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/2e2f9f63.eb00db54.js:0
+[  462455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0d8910ea.863a2b8a.js:0
+[  462455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e617aeb0.59efb4a4.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/6a892b91.7cec2cef.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/66a0620d.cc1b2725.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e8a0e744.b4bf61a9.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/d73efeb3.efb12521.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/73be7f4d.a3efc730.js:0
+[  462456ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/64fea976.d2723d82.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/ba0464c2.717439a1.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/3a5940b1.50978d79.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/ea974889.07613e21.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cd64733a.41e7e443.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/4c8857d1.11600db9.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/5befe2dc.63eb0b45.js:0
+[  462457ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/4b4e66e2.1da42646.js:0
+[  462458ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/bb134a14.1c8e34d0.js:0
+[  462458ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/3f470ef3.0cbc60eb.js:0
+[  462458ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/f8e991cd.ada8eacb.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/fdd7dbda.6ef243d6.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0a4efb86.addae767.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/42aab4da.5aac4c44.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cd8bbee0.f07a1cc7.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e9d4facc.6287daa9.js:0
+[  462459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/8755a86b.c1bd8f89.js:0
+[  462460ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/dfd9a1ff.ffdde9cf.js:0
+[  462460ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/2e50c1d5.695218d4.js:0
+[  462460ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/91f1a39d.283e1c38.js:0
+[  462461ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/9b1c7a35.4031e550.js:0
+[  462463ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cfc410ba.4e800da4.js:0
+[  462467ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c4bdffc4.9061b874.js:0
+[  462469ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e06792bc.0f989aa1.js:0
+[  462783ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/8363debb.8248617f.js:0
+[  462787ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/5647df1c.daa77991.js:0
+[  462866ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/47fc8126.6d0083a6.js:0
+[  462881ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/dd23b81b.9e90db56.js:0
+[  465017ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-FNPS55QW.js?v=40e7fec4:21608
+[  465254ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=f0658901:4435
+[  520333ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/2e2f9f63.eb00db54.js:0
+[  520334ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0c929b3a.1fbecca6.js:0
+[  520334ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/de41cbd3.d96e5a98.js:0
+[  520334ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/935d8b4a.0b9b80ff.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c9ed1476.727c72de.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e8a0e744.b4bf61a9.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/d73efeb3.efb12521.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/fccb6290.ce82577e.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c6f9bdf6.c778effd.js:0
+[  520335ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/15e3b795.f0c911d5.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/d59842f7.8d69a9e6.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e617aeb0.59efb4a4.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/66a0620d.cc1b2725.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e9d4facc.6287daa9.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/dfd9a1ff.ffdde9cf.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0a4efb86.addae767.js:0
+[  520336ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cd8bbee0.f07a1cc7.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/9b1c7a35.4031e550.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/64fea976.d2723d82.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/b170546b.04a7d702.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/4b4e66e2.1da42646.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/a470d36e.66d94639.js:0
+[  520337ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/337a83ca.f86bd624.js:0
+[  520338ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/54d61a2f.0d33eb5e.js:0
+[  520339ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/ea974889.07613e21.js:0
+[  520339ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cd64733a.41e7e443.js:0
+[  520339ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/fdd7dbda.6ef243d6.js:0
+[  520340ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/3a5940b1.50978d79.js:0
+[  520340ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/ba0464c2.717439a1.js:0
+[  520341ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/3f470ef3.0cbc60eb.js:0
+[  520364ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0e18cb31.d5e9e0e2.js:0
+[  520369ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/f8e991cd.ada8eacb.js:0
+[  520369ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/2e50c1d5.695218d4.js:0
+[  520370ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/91f1a39d.283e1c38.js:0
+[  520370ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/bb134a14.1c8e34d0.js:0
+[  520371ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/c4bdffc4.9061b874.js:0
+[  520372ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/cfc410ba.4e800da4.js:0
+[  520374ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/588648ec.0b7cc875.js:0
+[  520375ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/e06792bc.0f989aa1.js:0
+[  520375ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/0d8910ea.863a2b8a.js:0
+[  521549ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/8363debb.8248617f.js:0
+[  522518ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ https://wasp.sh/assets/js/dd23b81b.9e90db56.js:0
+[  525205ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-FNPS55QW.js?v=40e7fec4:21608
+[  525442ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=f0658901:4435
+[  782047ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-FNPS55QW.js?v=40e7fec4:21608
+[  782139ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=f0658901:4435
+[  783753ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ http://localhost:3000/node_modules/.vite/deps/chunk-FNPS55QW.js?v=40e7fec4:21608
+[  783825ms] [WARNING] ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition. @ http://localhost:3000/node_modules/.vite/deps/react-router-dom.js?v=f0658901:4435

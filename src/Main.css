@@ -10,7 +10,7 @@
   body {
     font-family: 'Inter', system-ui, sans-serif;
     margin: 0; padding: 0;
-    @apply bg-stone-50 text-zinc-900 antialiased;
+    @apply bg-[#fafaf8] text-zinc-900 antialiased;
   }
   .dark body {
     @apply bg-surface-0 text-white;
@@ -61,7 +61,7 @@
   .card {
     @apply rounded-2xl border transition-all duration-200;
     @apply border-zinc-200/80 bg-white;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.02);
   }
   .dark .card {
     @apply border-white/[0.06] bg-white/[0.02];
@@ -69,7 +69,7 @@
   }
   .card:hover {
     @apply border-wasp-300/60;
-    box-shadow: 0 4px 20px rgba(234,179,8,0.08);
+    box-shadow: 0 8px 30px rgba(234,179,8,0.1), 0 2px 8px rgba(0,0,0,0.04);
     transform: translateY(-2px);
   }
   .dark .card:hover {
@@ -96,8 +96,9 @@
   }
   .glow-hero {
     background:
-      radial-gradient(ellipse 600px 400px at 30% 20%, rgba(234,179,8,0.08), transparent 60%),
-      radial-gradient(ellipse 400px 300px at 70% 60%, rgba(249,115,22,0.04), transparent 60%);
+      radial-gradient(ellipse 600px 400px at 30% 20%, rgba(234,179,8,0.1), transparent 60%),
+      radial-gradient(ellipse 500px 350px at 70% 60%, rgba(249,115,22,0.06), transparent 60%),
+      radial-gradient(ellipse 300px 200px at 50% 80%, rgba(168,85,247,0.03), transparent 60%);
   }
   .dark .glow-hero {
     background:
@@ -105,15 +106,16 @@
       radial-gradient(ellipse 500px 400px at 70% 50%, rgba(249,115,22,0.04), transparent 60%);
   }
   .glow-section {
-    background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(234,179,8,0.03), transparent 70%);
+    background:
+      radial-gradient(ellipse 700px 300px at 50% 0%, rgba(234,179,8,0.05), transparent 70%);
   }
   .dark .glow-section {
     background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(250,204,21,0.04), transparent 70%);
   }
   .glow-cta {
     background:
-      radial-gradient(ellipse 600px 300px at 40% 50%, rgba(234,179,8,0.06), transparent 70%),
-      radial-gradient(ellipse 400px 250px at 60% 50%, rgba(249,115,22,0.04), transparent 70%);
+      radial-gradient(ellipse 600px 300px at 40% 50%, rgba(234,179,8,0.08), transparent 70%),
+      radial-gradient(ellipse 400px 250px at 60% 50%, rgba(249,115,22,0.05), transparent 70%);
   }
   .dark .glow-cta {
     background:
@@ -186,7 +188,7 @@ details[open] summary .faq-chevron { transform: rotate(180deg); }
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #b45309 0%, #d97706 30%, #eab308 60%, #ca8a04 100%);
+  background: linear-gradient(135deg, #92400e 0%, #b45309 25%, #d97706 50%, #b45309 75%, #92400e 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -212,7 +214,7 @@ details[open] summary .faq-chevron { transform: rotate(180deg); }
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(234,179,8,0.3), rgba(249,115,22,0.1), rgba(234,179,8,0.3));
+  background: linear-gradient(135deg, rgba(234,179,8,0.4), rgba(249,115,22,0.15), rgba(234,179,8,0.4));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude plugin:*)",
+      "Bash(wasp --version)",
+      "Bash(wasp version:*)",
+      "Bash(docker:*)",
+      "Bash(wasp new:*)",
+      "Bash(1:*)",
+      "Bash(shopt -s dotglob)",
+      "Bash(mv wasp-app/* .)",
+      "Bash(mv wasp-app/.* .)",
+      "Bash(rmdir wasp-app:*)",
+      "Bash(cp -a wasp-app/. .)",
+      "Bash(rm -rf wasp-app)",
+      "Read(//Users/friedemannfrommelt/wasp-redesign /**)",
+      "Read(//Users/friedemannfrommelt/wasp-redesign /src/**)"
+    ]
+  }
+}

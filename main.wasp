@@ -1,0 +1,11 @@
+app waspApp {
+  wasp: {
+    version: "^0.16.7"
+  },
+  title: "wasp-app"
+}
+
+route RootRoute { path: "/", to: MainPage }
+page MainPage {
+  component: import { MainPage } from "@src/MainPage"
+}

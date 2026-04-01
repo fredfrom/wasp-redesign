@@ -32,6 +32,20 @@ const WaspLogo = ({ size = 28 }) => <img src="/wasp-logo.png" alt="Wasp" width={
 const CopyIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
 const CheckSmall = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
 
+// ─── Version ───────────────────────────────────────────
+const DEFAULT_WASP_VERSION = '0.22.0'
+
+function useWaspVersion() {
+  const [version, setVersion] = useState(DEFAULT_WASP_VERSION)
+  useEffect(() => {
+    fetch('https://registry.npmjs.org/@wasp.sh/wasp-cli/latest')
+      .then(r => r.json())
+      .then(d => { if (d.version) setVersion(d.version) })
+      .catch(() => {})
+  }, [])
+  return version
+}
+
 // ─── Helpers ────────────────────────────────────────────
 const t = {
   h: 'text-zinc-900 dark:text-white',
@@ -623,25 +637,15 @@ function CodeComparison() {
 // ─── CLI Demo ──────────────────────────────────────────
 const cliDemoSteps = [
   {
-    cmd: 'curl -sSL https://get.wasp.sh/installer.sh | sh',
-    description: 'Install Wasp globally with a single command. Works on macOS, Linux, and WSL.',
-    terminalOutput: `  ____                  _
- / ___|  ___  ___  _ __ | |_
- \\___ \\ / _ \\/ __|| '_ \\| __|
-  ___) |  __/\\__ \\| |_) | |_
- |____/ \\___||___/| .__/ \\__|
-                  |_|
+    cmd: 'npm i -g @wasp.sh/wasp-cli@latest',
+    description: 'Install the Wasp CLI globally via npm. Works on macOS, Linux, and WSL.',
+    terminalOutput: `
+ added 1 package in 4s
 
- ── Installing Wasp v0.16 ──────────────────
+ ✓ @wasp.sh/wasp-cli@%VERSION% installed
 
- Downloading wasp-linux-x86_64.tar.gz...
- ███████████████████████████████████  100%
-
- ✓ Extracted to ~/.local/bin/wasp
- ✓ Added wasp to PATH
- ✓ Installation complete!
-
- Run 'wasp new' to create your first app.`,
+ Run 'wasp new' to create your first app.
+ Docs: https://wasp.sh/docs`,
     browserContent: 'install',
   },
   {
@@ -842,14 +846,14 @@ const cliDemoSteps = [
   },
 ]
 
-function CLIDemoBrowserContent({ type }) {
+function CLIDemoBrowserContent({ type, waspVersion }) {
   if (type === 'install') return (
     <div className="p-5 flex flex-col items-center justify-center h-full min-h-[280px]">
       <div className="w-16 h-16 mb-4 rounded-2xl bg-wasp-100 dark:bg-wasp-400/10 flex items-center justify-center"><WaspLogo size={36} /></div>
       <div className={`text-[15px] font-semibold ${t.h} mb-1`}>Welcome to Wasp</div>
       <div className={`text-[12px] ${t.m} mb-4`}>Full-stack framework installed</div>
       <div className="flex gap-2">
-        <span className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">v0.16.7</span>
+        <span className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">v{waspVersion}</span>
         <span className="text-[10px] font-mono px-2 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.04] text-zinc-500 border border-zinc-200 dark:border-white/[0.06]">Node 20+</span>
       </div>
     </div>
@@ -1057,6 +1061,7 @@ function CLIDemoBrowserContent({ type }) {
 }
 
 function CLIDemo() {
+  const waspVersion = useWaspVersion()
   const [activeStep, setActiveStep] = useState(0)
   const [typedCmd, setTypedCmd] = useState('')
   const [showOutput, setShowOutput] = useState(false)
@@ -1120,7 +1125,7 @@ function CLIDemo() {
                 ? 'bg-wasp-100 dark:bg-wasp-400/10 text-wasp-700 dark:text-wasp-400 border border-wasp-200 dark:border-wasp-400/20'
                 : `bg-zinc-100 dark:bg-white/[0.04] ${t.f} border border-transparent hover:border-zinc-200 dark:hover:border-white/[0.08]`
               }`}>
-              {s.cmd.split(' ').slice(0, s.cmd.startsWith('curl') ? 1 : 3).join(' ')}
+              {s.cmd.split(' ').slice(0, 3).join(' ')}
             </button>
           ))}
         </div>
@@ -1128,7 +1133,29 @@ function CLIDemo() {
         {/* Main demo area */}
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* Left: Browser preview */}
+            {/* Left: Terminal */}
+            <div className="gradient-border noise-overlay rounded-2xl bg-white dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
+              <div className="flex items-center gap-2 border-b border-zinc-100 dark:border-white/[0.06] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400/20 dark:bg-red-500/20" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400/20 dark:bg-yellow-500/20" />
+                  <div className="w-3 h-3 rounded-full bg-green-400/20 dark:bg-green-500/20" />
+                </div>
+                <span className={`text-[11px] font-medium ${t.m} ml-2`}>Terminal</span>
+              </div>
+              <div className="p-4 font-mono text-[11px] leading-[1.7] min-h-[280px] overflow-hidden">
+                <div className="flex">
+                  <span className="text-emerald-600 dark:text-emerald-400 mr-2 select-none">$</span>
+                  <span className={t.h}>{typedCmd}</span>
+                  {isTyping && <span className="inline-block w-[7px] h-[14px] bg-zinc-400 dark:bg-zinc-500 ml-0.5 animate-pulse" />}
+                </div>
+                {showOutput && (
+                  <pre className={`${t.m} mt-2 whitespace-pre-wrap cli-demo-fade-in`}>{step.terminalOutput.replace(/%VERSION%/g, waspVersion)}</pre>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Browser preview */}
             <div className="gradient-border noise-overlay rounded-2xl bg-white dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
               <div className="flex items-center gap-2 border-b border-zinc-100 dark:border-white/[0.05] px-4 py-2.5">
                 <div className="flex gap-1.5">
@@ -1138,29 +1165,7 @@ function CLIDemo() {
                 </div>
                 <span className={`text-[11px] font-medium ${t.m} ml-2`}>Preview</span>
               </div>
-              <CLIDemoBrowserContent type={step.browserContent} />
-            </div>
-
-            {/* Right: Terminal */}
-            <div className="gradient-border noise-overlay rounded-2xl bg-zinc-900 dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
-              <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500/30" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/30" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/30" />
-                </div>
-                <span className="text-[11px] font-medium text-zinc-500 ml-2">Terminal</span>
-              </div>
-              <div className="p-4 font-mono text-[11px] leading-[1.7] min-h-[280px] overflow-hidden">
-                <div className="flex">
-                  <span className="text-emerald-400 mr-2 select-none">$</span>
-                  <span className="text-zinc-100">{typedCmd}</span>
-                  {isTyping && <span className="inline-block w-[7px] h-[14px] bg-zinc-400 ml-0.5 animate-pulse" />}
-                </div>
-                {showOutput && (
-                  <pre className="text-zinc-500 mt-2 whitespace-pre-wrap cli-demo-fade-in">{step.terminalOutput}</pre>
-                )}
-              </div>
+              <CLIDemoBrowserContent type={step.browserContent} waspVersion={waspVersion} />
             </div>
           </div>
 

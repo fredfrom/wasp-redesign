@@ -296,6 +296,15 @@ details[open] summary .faq-chevron { transform: rotate(180deg); }
   50% { opacity: 0.45; }
 }
 
+/* ─── CLI Demo ────────────────────────────────────────── */
+.cli-demo-fade-in {
+  animation: cliDemoFadeIn 0.4s ease-out;
+}
+@keyframes cliDemoFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

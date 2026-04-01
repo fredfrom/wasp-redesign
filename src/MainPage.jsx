@@ -516,8 +516,9 @@ app.<span class="tk-fn">get</span>(<span class="tk-str">"/api/tasks"</span>, <sp
 ]
 
 // ─── Components ─────────────────────────────────────────
-function CodeBlock() {
+function CodeBlock({ waspVersion }) {
   const [tab, setTab] = useState('wasp')
+  const vMajor = '^' + waspVersion.split('.').slice(0, 2).join('.')
   const inactive = 'text-zinc-400 dark:text-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-400'
   return (
     <div className="gradient-border noise-overlay rounded-2xl bg-white dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
@@ -537,7 +538,7 @@ function CodeBlock() {
       <div className="p-5 md:p-6 overflow-x-auto">
         {tab === 'wasp' ? (
           <pre className="font-mono text-[13px] leading-[1.75]" dangerouslySetInnerHTML={{ __html: `<span class="tk-kw">app</span> <span class="tk-type">myApp</span> <span class="tk-br">{</span>
-  <span class="tk-prop">wasp</span>: <span class="tk-br">{</span> <span class="tk-prop">version</span>: <span class="tk-str">"^0.16"</span> <span class="tk-br">}</span>,
+  <span class="tk-prop">wasp</span>: <span class="tk-br">{</span> <span class="tk-prop">version</span>: <span class="tk-str">"${vMajor}"</span> <span class="tk-br">}</span>,
   <span class="tk-prop">title</span>: <span class="tk-str">"My Full-Stack App"</span>,
   <span class="tk-prop">auth</span>: <span class="tk-br">{</span>
     <span class="tk-prop">userEntity</span>: <span class="tk-type">User</span>,
@@ -1685,6 +1686,7 @@ function FAQ({ q, a, defaultOpen = false }) {
 // ─── Main Page ──────────────────────────────────────────
 export const MainPage = () => {
   const [dark, toggleTheme] = useTheme()
+  const waspVersion = useWaspVersion()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -1765,7 +1767,7 @@ export const MainPage = () => {
                 </div>
               </div>
             </div>
-            <div className="anim-5"><div className="float"><CodeBlock /></div></div>
+            <div className="anim-5"><div className="float"><CodeBlock waspVersion={waspVersion} /></div></div>
           </div>
         </div>
       </section>

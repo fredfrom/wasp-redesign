@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import './Main.css'
 
 // ─── Theme ──────────────────────────────────────────────
@@ -27,6 +27,7 @@ const MoonIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const DiscordIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.74 19.74 0 003.677 4.37a.07.07 0 00-.032.028C.533 9.046-.32 13.58.099 18.058a.082.082 0 00.031.056 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.873-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.11 13.11 0 01-1.872-.892.077.077 0 01-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 01.078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.099.246.198.373.292a.077.077 0 01-.006.127 12.3 12.3 0 01-1.873.892.076.076 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.84 19.84 0 006.002-3.03.077.077 0 00.032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03z"/></svg>
 const XIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 const LinkedInIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+const BlueskyIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.785 2.627 3.601 3.476 6.178 3.223-4.388.43-8.248 1.846-3.24 6.528 5.399 4.727 7.341-1.188 8.438-4.32.198-.563.288-.834.288-.609 0-.225.09.046.288.609 1.097 3.132 3.04 9.047 8.438 4.32 5.009-4.682 1.149-6.098-3.24-6.528 2.577.253 5.393-.596 6.178-3.223C24.298 9.418 24.676 4.458 24.676 3.768c0-.688-.139-1.86-.902-2.203-.659-.299-1.664-.621-4.3 1.24C16.723 4.747 13.764 8.686 12.677 10.8z"/></svg>
 const WaspLogo = ({ size = 28 }) => <img src="/wasp-logo.png" alt="Wasp" width={size} height={size} style={{ imageRendering: 'auto' }} />
 const CopyIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
 const CheckSmall = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -748,6 +749,348 @@ function HowItWorks() {
   )
 }
 
+// ─── Architecture Diagram ──────────────────────────────
+function ArchitectureDiagram() {
+  const middleRef = useRef(null)
+  const svgRef = useRef(null)
+
+  const drawLines = useCallback(() => {
+    const mid = middleRef.current
+    const svg = svgRef.current
+    if (!mid || !svg) return
+
+    while (svg.firstChild) svg.removeChild(svg.firstChild)
+
+    const mr = mid.getBoundingClientRect()
+    const W = mr.width, H = mr.height
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`)
+    svg.style.width = W + 'px'
+    svg.style.height = H + 'px'
+
+    const cx = W / 2, cy = H / 2
+    const ns = 'http://www.w3.org/2000/svg'
+
+    function el(tag, attrs) {
+      const e = document.createElementNS(ns, tag)
+      if (attrs) Object.entries(attrs).forEach(([k, v]) => e.setAttribute(k, v))
+      return e
+    }
+
+    function ry(selector) {
+      const cards = mid.closest('.arch-flow').querySelectorAll(selector)
+      return [...cards].map(c => {
+        const r = c.getBoundingClientRect()
+        return r.top + r.height / 2 - mr.top
+      })
+    }
+
+    function makePath(x0, y0, x1, y1, side) {
+      const r = 8
+      if (side === 'left') {
+        if (Math.abs(y0 - cy) < 4) return `M${x0},${y0} L${x1},${y1}`
+        const dir = y0 < cy ? 1 : -1
+        return `M${x0},${y0} L${cx - r},${y0} Q${cx},${y0} ${cx},${y0 + dir * r} L${cx},${cy}`
+      } else {
+        if (Math.abs(y1 - cy) < 4) return `M${x0},${y0} L${x1},${y1}`
+        const dir = y1 > cy ? 1 : -1
+        return `M${cx},${cy} L${cx},${y1 - dir * r} Q${cx},${y1} ${cx + r},${y1} L${x1},${y1}`
+      }
+    }
+
+    function addTrack(d, color) {
+      svg.appendChild(el('path', { d, fill: 'none', stroke: color, 'stroke-width': '0.5', 'stroke-opacity': '0.12' }))
+    }
+
+    function addParticle(d, color, delay, dur) {
+      const p = el('path', {
+        d, fill: 'none', stroke: color, 'stroke-width': '1', 'stroke-linecap': 'round',
+        'stroke-dasharray': '4 400', 'stroke-dashoffset': '1'
+      })
+      p.style.animation = `arch-particle ${dur}s linear ${delay}s infinite`
+      svg.appendChild(p)
+    }
+
+    function addJunction(x, y, color) {
+      const outer = el('circle', { cx: x, cy: y, r: '2.5', fill: color, 'fill-opacity': '0.2' })
+      outer.style.animation = 'arch-node-pulse 2s ease-in-out infinite'
+      svg.appendChild(outer)
+      svg.appendChild(el('circle', { cx: x, cy: y, r: '1.2', fill: color, 'fill-opacity': '0.6' }))
+    }
+
+    const iY = ry('.arch-input-card')
+    const oY = ry('.arch-output-card')
+    const colors = {
+      wasp: '#EF9F27', tsx: '#AFA9EC', prisma: '#5DCAA5',
+      frontend: '#AFA9EC', backend: '#5DCAA5', deploy: '#F0997B'
+    }
+
+    const inputs = [
+      { y: iY[0], c: colors.wasp, delays: [0, 0.9, 1.8] },
+      { y: iY[1], c: colors.tsx, delays: [0.25, 1.15, 2.05] },
+      { y: iY[2], c: colors.prisma, delays: [0.5, 1.4, 2.3] },
+    ]
+
+    inputs.forEach(({ y, c, delays }) => {
+      const d = makePath(0, y, cx, cy, 'left')
+      addTrack(d, c)
+      delays.forEach(dl => addParticle(d, c, dl, 2.7))
+      addJunction(0, y, c)
+    })
+
+    addJunction(cx, cy, colors.wasp)
+
+    const outputs = [
+      { y: oY[0], c: colors.frontend, delays: [0.15, 1.05, 1.95] },
+      { y: oY[1], c: colors.backend, delays: [0.4, 1.3, 2.2] },
+      { y: oY[2], c: colors.deploy, delays: [0.65, 1.55, 2.45] },
+    ]
+
+    outputs.forEach(({ y, c, delays }) => {
+      const d = makePath(cx, cy, W, y, 'right')
+      addTrack(d, c)
+      delays.forEach(dl => addParticle(d, c, dl, 2.7))
+      addJunction(W, y, c)
+    })
+
+    // Bus lines
+    const topY = Math.min(...iY)
+    addTrack(`M${cx},${topY} L${cx},${cy}`, 'rgba(239,159,39,0.3)')
+    const rTopY = Math.min(...oY), rBotY = Math.max(...oY)
+    addTrack(`M${cx},${cy} L${cx},${rTopY} M${cx},${cy} L${cx},${rBotY}`, 'rgba(255,255,255,0.06)')
+  }, [])
+
+  useEffect(() => {
+    const timer = setTimeout(drawLines, 150)
+    window.addEventListener('resize', drawLines)
+    return () => { clearTimeout(timer); window.removeEventListener('resize', drawLines) }
+  }, [drawLines])
+
+  return (
+    <section className={`py-28 md:py-36 border-t ${t.sec}`}>
+      <div className="max-w-[1100px] mx-auto px-6">
+        <div className="text-center mb-16">
+          <span className={`text-[11px] font-semibold ${t.accent} uppercase tracking-[0.15em] mb-3 block`}>Architecture</span>
+          <h2 className={`text-3xl md:text-[2.5rem] font-bold tracking-tight ${t.h} mb-4`}>One compiler. Full-stack output.</h2>
+          <p className={`${t.m} max-w-xl mx-auto text-[15px] leading-relaxed`}>Your config and business logic flow through the Wasp compiler, which generates a complete, production-ready app.</p>
+        </div>
+
+        <div className="arch-flow grid grid-cols-1 lg:grid-cols-[1fr_160px_1fr] items-stretch gap-0">
+
+          {/* ── INPUTS ── */}
+          <div className="flex flex-col gap-3 lg:pr-0">
+            <div className={`text-[9px] tracking-[2px] uppercase ${t.f} mb-1 font-mono`}>written by developer</div>
+
+            {/* main.wasp */}
+            <div className="arch-input-card rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <div className="flex gap-1.5">
+                  <div className="w-[7px] h-[7px] rounded-full bg-red-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-yellow-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-green-400/70" />
+                </div>
+                <span className="ml-2 text-[8px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.08] text-zinc-500 dark:text-zinc-400 border border-zinc-200/60 dark:border-white/[0.1]">main.wasp</span>
+              </div>
+              <div className="px-3.5 py-3">
+                <pre className="font-mono text-[9px] leading-[1.8]"><span className="tk-kw">app</span> myApp {'{'}{'\n'}  <span className="tk-prop">title</span>: <span className="tk-str">"My SaaS"</span>,{'\n'}  <span className="tk-kw">auth</span>: {'{'}{'\n'}    <span className="tk-prop">userEntity</span>: <span className="tk-type">User</span>,{'\n'}    <span className="tk-prop">methods</span>: {'{'} <span className="tk-prop">google</span>: {'{'}{'}'}  {'}'}{'\n'}  {'}'}{'\n'}{'}'}{'\n'}<span className="tk-kw">route</span> <span className="tk-type">DashRoute</span> {'{'}{'\n'}  <span className="tk-prop">path</span>: <span className="tk-str">"/dashboard"</span>,{'\n'}  <span className="tk-prop">to</span>: <span className="tk-type">Dashboard</span>{'\n'}{'}'}</pre>
+                <div className="flex gap-1 mt-2.5">
+                  <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">.wasp</span>
+                </div>
+              </div>
+            </div>
+
+            {/* React + queries */}
+            <div className="arch-input-card rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <div className="flex gap-1.5">
+                  <div className="w-[7px] h-[7px] rounded-full bg-red-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-yellow-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-green-400/70" />
+                </div>
+                <span className="ml-2 text-[8px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.08] text-zinc-500 dark:text-zinc-400 border border-zinc-200/60 dark:border-white/[0.1]">Dashboard.tsx</span>
+                <span className="text-[8px] font-mono px-2 py-0.5 rounded bg-transparent text-zinc-300 dark:text-zinc-600 border border-transparent">queries.ts</span>
+              </div>
+              <div className="px-3.5 py-3">
+                <pre className="font-mono text-[9px] leading-[1.8]"><span className="tk-kw">export default</span> () =&gt; ({'\n'}  &lt;<span className="tk-str">Dashboard</span> /&gt;{'\n'}){'\n'}{'\n'}<span className="tk-kw">export const</span> <span className="tk-fn">getTasks</span>: <span className="tk-type">GetTasks</span> ={'\n'}  <span className="tk-kw">async</span> (args, ctx) =&gt; {'{'}{'\n'}    <span className="tk-kw">return</span> ctx.entities.<span className="tk-type">Task</span>.<span className="tk-fn">findMany</span>(){'\n'}  {'}'}</pre>
+                <div className="flex gap-1 mt-2.5">
+                  <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">.tsx</span>
+                  <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">.ts</span>
+                </div>
+              </div>
+            </div>
+
+            {/* schema.prisma */}
+            <div className="arch-input-card rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <div className="flex gap-1.5">
+                  <div className="w-[7px] h-[7px] rounded-full bg-red-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-yellow-400/70" />
+                  <div className="w-[7px] h-[7px] rounded-full bg-green-400/70" />
+                </div>
+                <span className="ml-2 text-[8px] font-mono px-2 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.08] text-zinc-500 dark:text-zinc-400 border border-zinc-200/60 dark:border-white/[0.1]">schema.prisma</span>
+              </div>
+              <div className="px-3.5 py-3">
+                <pre className="font-mono text-[9px] leading-[1.8]"><span className="tk-kw">model</span> <span className="tk-str">Task</span> {'{'}{'\n'}  <span className="tk-prop">id</span>    <span className="tk-type">Int</span>     <span className="tk-cmt">@id @default(autoincrement())</span>{'\n'}  <span className="tk-prop">title</span> <span className="tk-type">String</span>{'\n'}  <span className="tk-prop">done</span>  <span className="tk-type">Boolean</span> <span className="tk-cmt">@default(false)</span>{'\n'}{'}'}</pre>
+                <div className="flex gap-1 mt-2.5">
+                  <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">.prisma</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── MIDDLE (compiler + SVG lines) ── */}
+          <div ref={middleRef} className="hidden lg:flex flex-col items-center justify-center relative">
+            <svg ref={svgRef} className="absolute inset-0 overflow-visible pointer-events-none" />
+
+            {/* Compiler card */}
+            <div className="relative z-10 w-[118px]">
+              <div className="rounded-xl overflow-hidden border border-wasp-400/20 dark:border-wasp-400/20 bg-wasp-50/50 dark:bg-wasp-400/[0.04] shadow-lg shadow-wasp-400/5 dark:shadow-black/40">
+                <div className="flex items-center gap-[5px] px-2.5 py-[7px] border-b border-wasp-200/40 dark:border-wasp-400/10 bg-wasp-50/30 dark:bg-wasp-400/[0.03]">
+                  <div className="w-[6px] h-[6px] rounded-full bg-wasp-400/80" style={{ animation: 'arch-dot-pulse 2.4s ease-in-out infinite' }} />
+                  <div className="w-[6px] h-[6px] rounded-full bg-wasp-400/30" style={{ animation: 'arch-dot-pulse 2.4s ease-in-out infinite 0.4s' }} />
+                  <div className="w-[6px] h-[6px] rounded-full bg-wasp-400/12" style={{ animation: 'arch-dot-pulse 2.4s ease-in-out infinite 0.8s' }} />
+                  <span className="ml-auto text-[7px] font-mono text-wasp-400/30 tracking-wide">Haskell compiler</span>
+                </div>
+                <div className="px-2.5 py-2.5">
+                  <div className="font-mono text-[7.5px] leading-[1.5]">
+                    <div><span className="text-wasp-600/40 dark:text-wasp-400/30">$ </span><span className="text-wasp-700/70 dark:text-wasp-400/70">wasp build</span></div>
+                    <div className="text-zinc-300 dark:text-zinc-700 mt-0.5">› parsing .wasp</div>
+                    <div className="text-zinc-300 dark:text-zinc-700">› type checking</div>
+                    <div className="text-zinc-300 dark:text-zinc-700">› codegen</div>
+                    <div className="mt-2 h-px bg-zinc-100 dark:bg-white/[0.04] rounded overflow-hidden">
+                      <div className="h-full bg-wasp-400/60" style={{ animation: 'arch-prog 2.4s ease-in-out infinite' }} />
+                    </div>
+                    <div className="arch-ok-fade mt-1.5">✓ build complete</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Mobile compiler (shown on small screens) ── */}
+          <div className="flex lg:hidden justify-center py-8">
+            <div className="flex items-center gap-3">
+              <div className="h-px w-12 bg-zinc-200 dark:bg-white/[0.06]" />
+              <div className="px-4 py-2.5 rounded-xl border border-wasp-400/20 bg-wasp-50/50 dark:bg-wasp-400/[0.04] font-mono text-[10px] text-wasp-700 dark:text-wasp-400/70">
+                <span className="text-wasp-400/40">$ </span>wasp build
+              </div>
+              <div className="h-px w-12 bg-zinc-200 dark:bg-white/[0.06]" />
+            </div>
+          </div>
+
+          {/* ── OUTPUTS ── */}
+          <div className="flex flex-col lg:pl-0">
+            <div className={`text-[9px] tracking-[2px] uppercase ${t.f} mb-3 font-mono lg:text-right`}>generated by wasp</div>
+
+            {/* Frontend */}
+            <div className="arch-output-card flex-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none flex flex-col">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <span className="text-[8px] font-semibold tracking-[1.5px] uppercase text-purple-500/60 dark:text-purple-400/50">front-end</span>
+                <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">generated</span>
+              </div>
+              <div className="px-4 py-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {[
+                      { name: 'React', color: '#61DAFB' },
+                      { name: 'Tailwind', color: '#38BDF8' },
+                      { name: 'Vite', color: '#646CFF' },
+                      { name: 'Auth UI', color: '#8b85c1' },
+                      { name: 'Router', color: '#8b85c1' },
+                      { name: 'RPC hooks', color: '#8b85c1' },
+                    ].map(tech => (
+                      <span key={tech.name} className="flex items-center gap-1.5 text-[8.5px] font-mono px-2 py-1 rounded bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.05] text-zinc-500 dark:text-zinc-500">
+                        <span className="w-1 h-1 rounded-full shrink-0" style={{ background: tech.color }} />
+                        {tech.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <pre className={`font-mono text-[8px] leading-[1.7] ${t.f}`}>{`web-app/src/
+├── router.tsx
+├── auth/
+│   ├── LoginPage.tsx
+│   ├── SignupPage.tsx
+│   └── PasswordReset.tsx
+├── operations/getTasks.ts
+└── vite.config.ts`}</pre>
+              </div>
+            </div>
+
+            {/* Backend */}
+            <div className="arch-output-card flex-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none mt-3 flex flex-col">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <span className="text-[8px] font-semibold tracking-[1.5px] uppercase text-emerald-500/60 dark:text-emerald-400/50">back-end</span>
+                <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">generated</span>
+              </div>
+              <div className="px-4 py-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {[
+                      { name: 'Node.js', color: '#68A063' },
+                      { name: 'Prisma', color: '#5DCAA5' },
+                      { name: 'Express', color: '#555' },
+                      { name: 'Auth logic', color: '#4a9e82' },
+                      { name: 'Migrations', color: '#4a9e82' },
+                    ].map(tech => (
+                      <span key={tech.name} className="flex items-center gap-1.5 text-[8.5px] font-mono px-2 py-1 rounded bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.05] text-zinc-500 dark:text-zinc-500">
+                        <span className="w-1 h-1 rounded-full shrink-0" style={{ background: tech.color }} />
+                        {tech.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <pre className={`font-mono text-[8px] leading-[1.7] ${t.f}`}>{`server/src/
+├── auth/
+│   ├── providers/google.ts
+│   ├── session.ts
+│   └── middleware.ts
+├── routes/operations.ts
+├── jobs/dailyReport.ts
+└── server.ts`}</pre>
+              </div>
+            </div>
+
+            {/* Deployment */}
+            <div className="arch-output-card flex-1 rounded-xl border border-zinc-200/80 dark:border-white/[0.07] bg-white dark:bg-white/[0.02] overflow-hidden shadow-sm dark:shadow-none mt-3 flex flex-col">
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-zinc-100 dark:border-white/[0.04] bg-zinc-50/50 dark:bg-white/[0.01]">
+                <span className="text-[8px] font-semibold tracking-[1.5px] uppercase text-orange-400/60 dark:text-orange-400/50">deployment</span>
+                <span className="text-[7px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-white/[0.04] text-zinc-400 dark:text-zinc-600 border border-zinc-200/50 dark:border-white/[0.06]">generated</span>
+              </div>
+              <div className="px-4 py-3.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {[
+                      { name: 'Docker', color: '#2496ED' },
+                      { name: 'Fly.io', color: '#7B3FE4' },
+                      { name: 'Railway', color: '#c07860' },
+                      { name: 'Dockerfile', color: '#555' },
+                    ].map(tech => (
+                      <span key={tech.name} className="flex items-center gap-1.5 text-[8.5px] font-mono px-2 py-1 rounded bg-zinc-50 dark:bg-white/[0.02] border border-zinc-200/50 dark:border-white/[0.05] text-zinc-500 dark:text-zinc-500">
+                        <span className="w-1 h-1 rounded-full shrink-0" style={{ background: tech.color }} />
+                        {tech.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <pre className={`font-mono text-[8px] leading-[1.7] ${t.f}`}>{`Dockerfile
+fly.toml
+db/
+├── schema.prisma
+└── migrations/`}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className={`text-center text-[13px] ${t.m} mt-10 font-mono`}>
+          you own 100% of the generated code &nbsp;·&nbsp;
+          <code className={`${t.accent} bg-wasp-50 dark:bg-wasp-400/10 px-1.5 py-0.5 rounded text-[11px]`}>wasp build</code> outputs a standard Node.js + React project &nbsp;·&nbsp; no lock-in
+        </p>
+      </div>
+    </section>
+  )
+}
+
 function TerminalBlock({ html }) {
   return (
     <div className="p-5 md:p-6">
@@ -804,6 +1147,7 @@ export const MainPage = () => {
             <a href="https://discord.gg/rzdnErX" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`} aria-label="Discord"><DiscordIcon /></a>
             <a href="https://x.com/WaspLang" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`} aria-label="X"><XIcon /></a>
             <a href="https://www.linkedin.com/company/wasp-sh" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`} aria-label="LinkedIn"><LinkedInIcon /></a>
+            <a href="https://bsky.app/profile/wasp.sh" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`} aria-label="Bluesky"><BlueskyIcon /></a>
             <button onClick={toggleTheme} className={`p-2 rounded-lg ${t.link} cursor-pointer hover:bg-zinc-100 dark:hover:bg-white/[0.06]`} aria-label="Toggle theme">{dark ? <SunIcon /> : <MoonIcon />}</button>
             <a href="https://wasp.sh/docs/quick-start" className="btn-primary ml-2 px-4 py-2 text-[13px]">Get Started <Arrow /></a>
           </div>
@@ -833,9 +1177,9 @@ export const MainPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
               <div className={`anim-1 inline-flex items-center gap-2.5 px-4 py-2 rounded-full border ${t.brd} bg-white/80 dark:bg-white/[0.03] mb-8`}>
-                <div className="w-1.5 h-1.5 rounded-full bg-wasp-400 animate-pulse" />
+                <img src="/wasp-logo.png" alt="" width={14} height={14} className="animate-pulse" style={{ imageRendering: 'auto' }} />
                 <span className={`text-[12px] ${t.m}`}>Backed by</span>
-                <span className={`text-[12px] font-bold ${t.accent}`}>Y Combinator</span>
+                <a href="https://www.ycombinator.com/companies/wasp" target="_blank" rel="noreferrer" className={`text-[12px] font-bold ${t.accent} hover:underline`}>Y Combinator</a>
               </div>
               <h1 className="anim-2 text-4xl sm:text-5xl lg:text-[3.75rem] font-black tracking-tight leading-[1.06] mb-6">
                 <span className={t.h}>Develop full-stack</span><br />
@@ -845,7 +1189,7 @@ export const MainPage = () => {
                 Rails-like framework for React, Node.js and Prisma. Build your app in a day and deploy it with a single CLI command.
               </p>
               <div className="anim-4 flex flex-wrap items-center gap-3 mb-12">
-                <a href="https://wasp.sh/docs/quick-start" className="btn-primary px-6 py-3 text-sm"><WaspLogo size={16} /> Get Started</a>
+                <a href="https://wasp.sh/docs/quick-start" className="btn-primary px-6 py-3 text-sm"><Arrow /> Get Started</a>
                 <a href="https://wasp.sh/docs" className="btn-ghost px-6 py-3 text-sm"><BookIcon /> Documentation</a>
               </div>
               <div className="anim-5 flex items-center gap-5">
@@ -1026,6 +1370,9 @@ $ <span class="tk-fn">/expert-advice</span>       <span class="tk-cmt">Wasp-spec
       {/* ── 8. How it Works (for the architecturally curious) ── */}
       <HowItWorks />
 
+      {/* ── 8b. Architecture Diagram ── */}
+      <ArchitectureDiagram />
+
       {/* ── 9. Install ── */}
       <InstallCommand />
 
@@ -1069,6 +1416,13 @@ $ <span class="tk-fn">/expert-advice</span>       <span class="tk-cmt">Wasp-spec
                     <p className={`text-[12px] ${t.m}`}>Company updates, hiring</p>
                   </div>
                 </a>
+                <a href="https://bsky.app/profile/wasp.sh" target="_blank" rel="noreferrer" className="card flex items-center gap-4 p-4 group">
+                  <div className="w-10 h-10 rounded-xl bg-sky-500/10 flex items-center justify-center"><BlueskyIcon /></div>
+                  <div>
+                    <p className={`text-[14px] font-semibold ${t.h}`}>Bluesky</p>
+                    <p className={`text-[12px] ${t.m}`}>Follow us on the open web</p>
+                  </div>
+                </a>
               </div>
             </div>
             {/* FAQ */}
@@ -1109,19 +1463,6 @@ $ <span class="tk-fn">/expert-advice</span>       <span class="tk-cmt">Wasp-spec
         </div>
       </section>
 
-      {/* ── Newsletter ── */}
-      <section className={`py-20 border-t ${t.sec}`}>
-        <div className="max-w-lg mx-auto px-6 text-center">
-          <h2 className={`text-2xl md:text-3xl font-bold tracking-tight ${t.h} mb-4`}>Stay up to date</h2>
-          <p className={`${t.m} mb-6 text-[15px]`}>Be the first to know when we ship new features.</p>
-          <form className="flex flex-col sm:flex-row gap-3" onSubmit={e => e.preventDefault()}>
-            <label htmlFor="email" className="sr-only">Email</label>
-            <input id="email" type="email" placeholder="you@awesomedev.com" required className={`flex-1 px-5 py-3 bg-white dark:bg-white/[0.04] border ${t.brd} rounded-xl text-sm ${t.h} placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-wasp-400/50 focus:ring-2 focus:ring-wasp-400/10 transition-all`} />
-            <button type="submit" className="btn-primary px-6 py-3 text-sm whitespace-nowrap justify-center">Subscribe</button>
-          </form>
-        </div>
-      </section>
-
       {/* ── Final CTA ── */}
       <section className={`relative py-28 md:py-36 border-t ${t.sec} overflow-hidden`}>
         <div className="glow-cta absolute inset-0 pointer-events-none" />
@@ -1138,40 +1479,50 @@ $ <span class="tk-fn">/expert-advice</span>       <span class="tk-cmt">Wasp-spec
       {/* ── Footer ── */}
       <footer className={`border-t ${t.sec} py-16`}>
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-10 mb-14">
-            <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-5">
-                <WaspLogo size={22} />
-                <span className={`text-sm font-bold ${t.h}`}>Wasp</span>
-              </div>
-              <p className={`text-[13px] ${t.f} leading-relaxed max-w-[260px] mb-4`}>The fastest way to develop full-stack web apps with React & Node.js.</p>
-              <div className="flex items-center gap-2 mb-5">
-                <span className={`text-[11px] ${t.f}`}>Backed by</span>
-                <span className={`text-[11px] font-bold ${t.accent}`}>Y Combinator</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <a href="https://github.com/wasp-lang/wasp" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`}><GithubIcon /></a>
-                <a href="https://discord.gg/rzdnErX" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`}><DiscordIcon /></a>
-                <a href="https://x.com/WaspLang" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`}><XIcon /></a>
-                <a href="https://www.linkedin.com/company/wasp-sh" target="_blank" rel="noreferrer" className={`p-2 rounded-lg ${t.link}`}><LinkedInIcon /></a>
-              </div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
             {[
-              { title: 'Docs', items: [['Getting Started', 'https://wasp.sh/docs'], ['Todo tutorial', 'https://wasp.sh/docs/tutorial/create'], ['Language ref', 'https://wasp.sh/docs/general/language'], ['npm', 'https://www.npmjs.com/~wasp-lang-info']] },
-              { title: 'Community', items: [['Discord', 'https://discord.gg/rzdnErX'], ['X / Twitter', 'https://x.com/WaspLang'], ['LinkedIn', 'https://www.linkedin.com/company/wasp-sh'], ['Bluesky', 'https://bsky.app/profile/wasp.sh'], ['GitHub', 'https://github.com/wasp-lang/wasp']] },
-              { title: 'Company', items: [['Blog', 'https://wasp.sh/blog'], ['OpenSaaS', 'https://opensaas.sh'], ['Careers', 'https://wasp-lang.notion.site/Wasp-Careers-59fd1682c80d446f92be5fa65cc17672'], ['Resources', 'https://wasp.sh/resources']] },
+              { title: 'Docs', items: [['Getting Started', 'https://wasp.sh/docs'], ['Todo app tutorial', 'https://wasp.sh/docs/tutorial/create'], ['Language reference', 'https://wasp.sh/docs/general/language']] },
+              { title: 'Community', items: [['Discord', 'https://discord.gg/rzdnErX'], ['X / Twitter', 'https://x.com/WaspLang'], ['Bluesky', 'https://bsky.app/profile/wasp.sh'], ['GitHub', 'https://github.com/wasp-lang/wasp']] },
+              { title: 'Company', items: [['Blog', 'https://wasp.sh/blog'], ['Careers', 'https://wasp-lang.notion.site/Wasp-Careers-59fd1682c80d446f92be5fa65cc17672'], ['Company', 'https://www.linkedin.com/company/wasp-sh'], ['Resources', 'https://wasp.sh/resources']] },
             ].map(col => (
               <div key={col.title}>
-                <h4 className={`text-[11px] font-semibold ${t.m} uppercase tracking-wider mb-4`}>{col.title}</h4>
+                <h4 className={`text-[13px] font-semibold ${t.h} mb-4`}>{col.title}</h4>
                 <ul className="space-y-2.5">
                   {col.items.map(([label, href]) => <li key={label}><a href={href} target="_blank" rel="noreferrer" className={`text-[13px] ${t.f} hover:text-zinc-900 dark:hover:text-white transition-colors`}>{label}</a></li>)}
                 </ul>
               </div>
             ))}
+            <div>
+              <h4 className={`text-[13px] font-semibold ${t.h} mb-4`}>Stay up to date</h4>
+              <p className={`text-[13px] ${t.f} leading-relaxed mb-4`}>Join our mailing list and be the first to know when we ship new features and updates!</p>
+              <form className="flex gap-2" onSubmit={e => e.preventDefault()}>
+                <label htmlFor="footer-email" className="sr-only">Email</label>
+                <input id="footer-email" type="email" placeholder="you@awesomedev.com" required className={`flex-1 min-w-0 px-3 py-2 bg-white dark:bg-white/[0.04] border ${t.brd} rounded-lg text-[12px] ${t.h} placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-wasp-400/50 focus:ring-2 focus:ring-wasp-400/10 transition-all`} />
+                <button type="submit" className="btn-primary px-4 py-2 text-[11px] whitespace-nowrap justify-center">Subscribe</button>
+              </form>
+              <div className="flex items-center gap-2 mt-4">
+                <span className={`text-[11px] ${t.f}`}>Backed by</span>
+                <a href="https://www.ycombinator.com/companies/wasp" target="_blank" rel="noreferrer" className={`text-[11px] font-bold ${t.accent} hover:underline`}>Y Combinator</a>
+              </div>
+            </div>
           </div>
           <div className={`border-t ${t.sec} pt-6 flex flex-col md:flex-row items-center justify-between gap-4`}>
-            <p className={`text-[12px] ${t.f}`}>&copy; Wasp, Inc. All rights reserved.</p>
-            <a href="https://wasp.sh/privacy-policy" className={`text-[12px] ${t.f} hover:text-zinc-900 dark:hover:text-zinc-400 transition-colors`}>Privacy Policy</a>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <WaspLogo size={18} />
+                <span className={`text-[12px] font-semibold ${t.f}`}>Wasp</span>
+              </div>
+              <p className={`text-[12px] ${t.f}`}>&copy; Wasp, Inc. All rights reserved.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <a href="https://github.com/wasp-lang/wasp" target="_blank" rel="noreferrer" className={`${t.link}`}><GithubIcon /></a>
+              <a href="https://discord.gg/rzdnErX" target="_blank" rel="noreferrer" className={`${t.link}`}><DiscordIcon /></a>
+              <a href="https://x.com/WaspLang" target="_blank" rel="noreferrer" className={`${t.link}`}><XIcon /></a>
+              <a href="https://www.linkedin.com/company/wasp-sh" target="_blank" rel="noreferrer" className={`${t.link}`}><LinkedInIcon /></a>
+              <a href="https://bsky.app/profile/wasp.sh" target="_blank" rel="noreferrer" className={`${t.link}`}><BlueskyIcon /></a>
+              <span className={`text-[12px] ${t.f} ml-2`}>·</span>
+              <a href="https://wasp.sh/privacy-policy" className={`text-[12px] ${t.f} hover:text-zinc-900 dark:hover:text-zinc-400 transition-colors`}>Privacy Policy</a>
+            </div>
           </div>
         </div>
       </footer>

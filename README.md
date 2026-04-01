@@ -4,6 +4,20 @@
 
 **[Live Demo](http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/)**
 
+## Screenshots
+
+![Hero section](screenshots/01-hero.png)
+
+![Code comparison](screenshots/02-code-comparison.png)
+
+![Claude Code plugin](screenshots/03-claude-code-plugin.png)
+
+![How it works](screenshots/04-how-it-works.png)
+
+![Community & FAQ](screenshots/05-community-faq.png)
+
+![Blog & footer](screenshots/07-blog-footer.png)
+
 ## About
 
 A redesigned landing page concept for [Wasp](https://wasp-lang.dev), the full-stack React & Node.js framework. Built with Wasp itself to showcase the developer experience.

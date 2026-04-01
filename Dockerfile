@@ -7,7 +7,7 @@ COPY . .
 
 # Build the Wasp web-app (wasp build must have been run already)
 WORKDIR /app/.wasp/build/web-app
-RUN npm ci && npx vite build
+RUN npm ci && npm install --no-save vitest && npx vite build
 
 # Serve with nginx
 FROM nginx:alpine

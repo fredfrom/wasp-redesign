@@ -71,6 +71,9 @@ RUN printf 'server {\n\
   index index.html;\n\
   location / {\n\
     try_files $uri $uri/ /index.html;\n\
+    add_header Cache-Control "no-cache, no-store, must-revalidate";\n\
+    add_header Pragma "no-cache";\n\
+    add_header Expires "0";\n\
   }\n\
   location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff2?)$ {\n\
     expires 1y;\n\
@@ -81,5 +84,7 @@ RUN printf 'server {\n\
 COPY dist/ /usr/share/nginx/html
 
 EXPOSE 80
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD wget -qO- http://localhost:80/ || exit 1
 CMD ["nginx", "-g", "daemon off;"]
 

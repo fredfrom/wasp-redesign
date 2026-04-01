@@ -14,7 +14,8 @@
       "Bash(cp -a wasp-app/. .)",
       "Bash(rm -rf wasp-app)",
       "Read(//Users/friedemannfrommelt/wasp-redesign /**)",
-      "Read(//Users/friedemannfrommelt/wasp-redesign /src/**)"
+      "Read(//Users/friedemannfrommelt/wasp-redesign /src/**)",
+      "Bash(ls /Users/friedemannfrommelt/wasp-redesign/Dockerfile* /Users/friedemannfrommelt/wasp-redesign/docker-compose* /Users/friedemannfrommelt/wasp-redesign/nginx*)"
     ]
   }
 }

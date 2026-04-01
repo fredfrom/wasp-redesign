@@ -29,16 +29,22 @@ wasp start       # start the dev server
 
 ## Build & Deploy
 
-```bash
-# Build the Wasp project
-wasp build
+The `dist/` folder contains the pre-built static site. To rebuild after making changes:
 
-# Deploy with Docker (works with Coolify, Railway, Fly.io, etc.)
+```bash
+wasp build
+cd .wasp/build/web-app && npm install && npx vite build
+cp -r .wasp/build/web-app/build dist
+```
+
+To deploy with Docker (works with Coolify, Railway, Fly.io, etc.):
+
+```bash
 docker build -t wasp-landing .
 docker run -p 3000:80 wasp-landing
 ```
 
-The included `Dockerfile` builds the Vite frontend and serves it as a static site with nginx. Point any Docker-based hosting platform (e.g. Coolify) at this repo and it will auto-detect the Dockerfile.
+The `Dockerfile` serves the `dist/` folder with nginx. Point any Docker-based hosting platform (e.g. Coolify) at this repo and it will auto-detect the Dockerfile.
 
 ## License
 

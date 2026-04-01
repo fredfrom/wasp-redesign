@@ -1,0 +1,5 @@
+node_modules
+.wasp/out
+.wasp/build/web-app/node_modules
+.wasp/build/server/node_modules
+.git

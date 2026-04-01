@@ -1,4 +1,4 @@
-.wasp/
+.wasp/out/
 node_modules/
 
 # Ignore all dotenv files by default to prevent accidentally committing any secrets.

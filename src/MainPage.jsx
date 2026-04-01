@@ -620,6 +620,562 @@ function CodeComparison() {
   )
 }
 
+// ─── CLI Demo ──────────────────────────────────────────
+const cliDemoSteps = [
+  {
+    cmd: 'curl -sSL https://get.wasp.sh/installer.sh | sh',
+    description: 'Install Wasp globally with a single command. Works on macOS, Linux, and WSL.',
+    terminalOutput: `  ____                  _
+ / ___|  ___  ___  _ __ | |_
+ \\___ \\ / _ \\/ __|| '_ \\| __|
+  ___) |  __/\\__ \\| |_) | |_
+ |____/ \\___||___/| .__/ \\__|
+                  |_|
+
+ ── Installing Wasp v0.16 ──────────────────
+
+ Downloading wasp-linux-x86_64.tar.gz...
+ ███████████████████████████████████  100%
+
+ ✓ Extracted to ~/.local/bin/wasp
+ ✓ Added wasp to PATH
+ ✓ Installation complete!
+
+ Run 'wasp new' to create your first app.`,
+    browserContent: 'install',
+  },
+  {
+    cmd: 'wasp new my-app -t basic',
+    description: 'Scaffold a new full-stack app from a starter template. Includes auth, DB, and example pages.',
+    terminalOutput: ` 🐝 --- Creating your Wasp app from template... ──
+
+  → Project name: my-app
+  → Template: basic
+
+ Creating directory my-app...
+ Setting up project files...
+
+  my-app/
+  ├── main.wasp          # App config
+  ├── schema.prisma      # Database schema
+  ├── src/
+  │   ├── MainPage.jsx   # Landing page
+  │   └── operations.ts  # Server logic
+  └── .env.server        # Server secrets
+
+ ✓ Project created successfully!
+
+ To start developing:
+   cd my-app
+   wasp start db
+   wasp start`,
+    browserContent: 'new',
+  },
+  {
+    cmd: 'wasp start db',
+    description: 'Spins up a managed PostgreSQL database in Docker. No manual setup, connection strings, or config needed.',
+    terminalOutput: ` 🐝 --- Starting development database... ──────
+
+ Pulling postgres:16-alpine image...
+ ✓ Image ready
+
+ Starting PostgreSQL container...
+ ✓ Container wasp-dev-db-my-app running
+
+ PostgreSQL 16.2 on port 5432
+ Database: my-app-dev
+ User: wasp
+
+ ✓ Database is ready and accepting connections.
+ ✓ DATABASE_URL configured automatically.`,
+    browserContent: 'db-start',
+  },
+  {
+    cmd: 'wasp start',
+    description: 'Launches the full-stack dev server with hot reload. Frontend on :3000, backend on :3001, all wired up.',
+    terminalOutput: ` 🐝 --- Starting Wasp app in dev mode... ──────
+
+ [ Wasp ] Compiling wasp project...
+ ✓ Project compiled successfully.
+
+ [Client] Starting Vite dev server...
+ [Server] Starting Express server...
+ [Server] Prisma client generated.
+ [Server] PgBoss job runner started.
+
+ [Client]  ✓ ready in 847ms
+
+   ➜ Client:  http://localhost:3000
+   ➜ Server:  http://localhost:3001
+
+ Watching for file changes...`,
+    browserContent: 'start',
+  },
+  {
+    cmd: 'wasp db migrate-dev --name "add-tasks"',
+    description: 'Creates and applies a database migration from your Prisma schema changes. Keeps your DB in sync with your code.',
+    terminalOutput: ` 🐝 --- Running database migration... ────────
+
+ Prisma schema loaded from schema.prisma
+
+ ✓ Generated migration: add-tasks
+   migrations/
+   └── 20260401_add_tasks/
+       └── migration.sql
+
+ Applying migration \`add-tasks\`...
+
+ CREATE TABLE "Task" (
+   "id" SERIAL PRIMARY KEY,
+   "description" TEXT NOT NULL,
+   "isDone" BOOLEAN DEFAULT false,
+   "userId" INTEGER REFERENCES "User"("id")
+ );
+
+ ✓ Migration applied successfully.
+ ✓ Prisma Client regenerated.`,
+    browserContent: 'migrate',
+  },
+  {
+    cmd: 'wasp db studio',
+    description: 'Opens Prisma Studio — a visual database browser. View, edit, and filter your data without writing SQL.',
+    terminalOutput: ` 🐝 --- Opening Prisma Studio... ─────────────
+
+ Prisma Studio is starting...
+
+ Environment loaded from .env.server
+
+ ✓ Prisma Studio is running on
+   http://localhost:5555
+
+ Connected to database: my-app-dev
+ Models available:
+   → User (3 records)
+   → Task (12 records)`,
+    browserContent: 'studio',
+  },
+  {
+    cmd: 'wasp db seed',
+    description: 'Runs your seed functions to populate the database with test data. Great for development and demos.',
+    terminalOutput: ` 🐝 --- Seeding database... ──────────────────
+
+ Running seed: devSeed
+
+ Seeding Users...
+   ✓ Created user alice@example.com
+   ✓ Created user bob@example.com
+   ✓ Created user carol@example.com
+
+ Seeding Tasks...
+   ✓ Created 4 tasks for alice
+   ✓ Created 3 tasks for bob
+   ✓ Created 5 tasks for carol
+
+ ✓ Database seeded successfully.
+   3 users, 12 tasks created.`,
+    browserContent: 'seed',
+  },
+  {
+    cmd: 'wasp build',
+    description: 'Compiles your entire app into deployable code — Dockerfiles, optimized bundles, migrations, and configs included.',
+    terminalOutput: ` 🐝 --- Building wasp project... ─────────────
+
+ Compiling wasp config...
+ ✓ Config validated
+
+ [Client] Building React app with Vite...
+ ✓ 214 modules transformed
+ ✓ Build: index.js (142 kB gzip)
+ ✓ Build: index.css (7.5 kB gzip)
+
+ [Server] Bundling Express server...
+ ✓ Server bundle ready
+
+ [Docker] Generating Dockerfile...
+ ✓ Multi-stage Dockerfile created
+
+ ✓ Build complete! Output in .wasp/build/
+   Ready for deployment.`,
+    browserContent: 'build',
+  },
+  {
+    cmd: 'wasp deploy fly deploy',
+    description: 'Ships your entire stack to Fly.io — frontend, backend, database, secrets, SSL — all in one command.',
+    terminalOutput: ` 🐝 --- Deploying to Fly.io... ───────────────
+
+ Building Docker image...
+ ✓ Image built (247 MB)
+
+ Deploying server...
+ ✓ Server deployed: my-app-server.fly.dev
+
+ Provisioning Postgres...
+ ✓ Database: my-app-db (256 MB, sjc region)
+
+ Running migrations...
+ ✓ All migrations applied
+
+ Deploying client...
+ ✓ Client deployed: my-app-client.fly.dev
+
+ Setting secrets...
+ ✓ DATABASE_URL, JWT_SECRET configured
+
+ ✓ App is live!
+   https://my-app-client.fly.dev`,
+    browserContent: 'deploy',
+  },
+  {
+    cmd: 'wasp clean',
+    description: 'Wipes all generated code, caches, and node_modules. The Wasp equivalent of "have you tried turning it off and on again?"',
+    terminalOutput: ` 🐝 --- Cleaning project... ──────────────────
+
+ Removing .wasp/out/...        ✓
+ Removing .wasp/build/...      ✓
+ Removing node_modules/...     ✓
+ Removing .wasp/cache/...      ✓
+
+ ✓ Project cleaned successfully.
+
+ Run 'wasp start' to regenerate everything.`,
+    browserContent: 'clean',
+  },
+]
+
+function CLIDemoBrowserContent({ type }) {
+  if (type === 'install') return (
+    <div className="p-5 flex flex-col items-center justify-center h-full min-h-[280px]">
+      <div className="w-16 h-16 mb-4 rounded-2xl bg-wasp-100 dark:bg-wasp-400/10 flex items-center justify-center"><WaspLogo size={36} /></div>
+      <div className={`text-[15px] font-semibold ${t.h} mb-1`}>Welcome to Wasp</div>
+      <div className={`text-[12px] ${t.m} mb-4`}>Full-stack framework installed</div>
+      <div className="flex gap-2">
+        <span className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">v0.16.7</span>
+        <span className="text-[10px] font-mono px-2 py-1 rounded-md bg-zinc-100 dark:bg-white/[0.04] text-zinc-500 border border-zinc-200 dark:border-white/[0.06]">Node 20+</span>
+      </div>
+    </div>
+  )
+  if (type === 'new') return (
+    <div className="p-5 min-h-[280px]">
+      <div className={`text-[11px] font-semibold ${t.accent} mb-3`}>Project created</div>
+      <div className="space-y-1.5">
+        {[
+          { name: 'main.wasp', desc: 'App config — routes, auth, jobs', color: 'text-wasp-600 dark:text-wasp-400' },
+          { name: 'schema.prisma', desc: 'Database models', color: 'text-emerald-600 dark:text-emerald-400' },
+          { name: 'src/MainPage.jsx', desc: 'Your first page', color: 'text-purple-600 dark:text-purple-400' },
+          { name: 'src/operations.ts', desc: 'Server queries & actions', color: 'text-blue-600 dark:text-blue-400' },
+          { name: '.env.server', desc: 'Server environment vars', color: 'text-zinc-500' },
+        ].map(f => (
+          <div key={f.name} className={`flex items-center gap-3 px-3 py-2 rounded-lg bg-zinc-50 dark:bg-white/[0.02] border border-zinc-100 dark:border-white/[0.04]`}>
+            <span className={`text-[11px] font-mono font-medium ${f.color} min-w-[130px]`}>{f.name}</span>
+            <span className={`text-[10px] ${t.f}`}>{f.desc}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+  if (type === 'db-start') return (
+    <div className="p-5 flex flex-col items-center justify-center h-full min-h-[280px]">
+      <div className="w-14 h-14 mb-4 rounded-xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4.03 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/></svg>
+      </div>
+      <div className={`text-[14px] font-semibold ${t.h} mb-1`}>PostgreSQL Running</div>
+      <div className={`text-[11px] ${t.m} mb-3`}>Managed dev database ready</div>
+      <div className="grid grid-cols-2 gap-2 text-[10px]">
+        <div className={`px-3 py-1.5 rounded-md bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.05] ${t.m}`}>Port: <span className={t.h}>5432</span></div>
+        <div className={`px-3 py-1.5 rounded-md bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.05] ${t.m}`}>DB: <span className={t.h}>my-app</span></div>
+      </div>
+    </div>
+  )
+  if (type === 'start') return (
+    <div className="p-5 min-h-[280px]">
+      <div className="rounded-lg border border-zinc-200 dark:border-white/[0.06] overflow-hidden mb-3">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-50 dark:bg-white/[0.02] border-b border-zinc-100 dark:border-white/[0.04]">
+          <div className="flex gap-1"><div className="w-2 h-2 rounded-full bg-red-400/60"/><div className="w-2 h-2 rounded-full bg-yellow-400/60"/><div className="w-2 h-2 rounded-full bg-green-400/60"/></div>
+          <div className={`flex-1 text-center text-[9px] font-mono ${t.f}`}>localhost:3000</div>
+        </div>
+        <div className="p-4 bg-white dark:bg-zinc-900/50">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-6 h-6 rounded bg-wasp-400/20 flex items-center justify-center"><WaspLogo size={14} /></div>
+            <span className={`text-[12px] font-semibold ${t.h}`}>My App</span>
+          </div>
+          <div className="space-y-2">
+            <div className="h-2 rounded bg-zinc-100 dark:bg-white/[0.06] w-3/4" />
+            <div className="h-2 rounded bg-zinc-100 dark:bg-white/[0.06] w-1/2" />
+            <div className="h-8 rounded bg-wasp-100 dark:bg-wasp-400/10 mt-3 flex items-center justify-center">
+              <span className="text-[9px] font-medium text-wasp-700 dark:text-wasp-400">Sign in with Google</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="flex gap-2 text-[10px]">
+        <span className="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">HMR active</span>
+        <span className={`px-2 py-1 rounded bg-zinc-50 dark:bg-white/[0.03] ${t.m} border border-zinc-100 dark:border-white/[0.05]`}>Vite 6.x</span>
+      </div>
+    </div>
+  )
+  if (type === 'migrate') return (
+    <div className="p-5 min-h-[280px]">
+      <div className={`text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 mb-3`}>Migration applied</div>
+      <div className="rounded-lg border border-zinc-200 dark:border-white/[0.06] overflow-hidden font-mono text-[10px]">
+        <div className="px-3 py-2 bg-zinc-50 dark:bg-white/[0.02] border-b border-zinc-100 dark:border-white/[0.04]">
+          <span className={t.f}>migrations/20260401_add_tasks/</span>
+        </div>
+        <div className="p-3 space-y-0.5">
+          <div><span className="text-blue-500">CREATE TABLE</span> <span className="text-emerald-600 dark:text-emerald-400">"Task"</span> (</div>
+          <div className="pl-4"><span className={t.m}>"id"</span> <span className="text-purple-500">SERIAL PRIMARY KEY</span>,</div>
+          <div className="pl-4"><span className={t.m}>"description"</span> <span className="text-purple-500">TEXT NOT NULL</span>,</div>
+          <div className="pl-4"><span className={t.m}>"isDone"</span> <span className="text-purple-500">BOOLEAN DEFAULT false</span>,</div>
+          <div className="pl-4"><span className={t.m}>"userId"</span> <span className="text-purple-500">INTEGER REFERENCES</span> <span className="text-emerald-600 dark:text-emerald-400">"User"</span></div>
+          <div>);</div>
+        </div>
+      </div>
+      <div className="mt-3 flex items-center gap-2">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span className={`text-[10px] ${t.m}`}>Prisma Client regenerated with new types</span>
+      </div>
+    </div>
+  )
+  if (type === 'studio') return (
+    <div className="p-5 min-h-[280px]">
+      <div className="rounded-lg border border-zinc-200 dark:border-white/[0.06] overflow-hidden">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-50 dark:bg-white/[0.02] border-b border-zinc-100 dark:border-white/[0.04]">
+          <div className="flex gap-1"><div className="w-2 h-2 rounded-full bg-red-400/60"/><div className="w-2 h-2 rounded-full bg-yellow-400/60"/><div className="w-2 h-2 rounded-full bg-green-400/60"/></div>
+          <div className={`flex-1 text-center text-[9px] font-mono ${t.f}`}>localhost:5555</div>
+        </div>
+        <div className="bg-white dark:bg-zinc-900/50">
+          <div className="flex items-center gap-3 px-3 py-2 border-b border-zinc-100 dark:border-white/[0.04]">
+            <span className="text-[10px] font-semibold text-zinc-800 dark:text-zinc-200">Prisma Studio</span>
+            <span className={`text-[9px] ${t.f}`}>my-app-dev</span>
+          </div>
+          <div className="flex">
+            <div className="w-24 border-r border-zinc-100 dark:border-white/[0.04] p-2 space-y-1">
+              <div className="px-2 py-1 rounded text-[9px] font-medium bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400">User</div>
+              <div className="px-2 py-1 rounded text-[9px] font-medium bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Task</div>
+            </div>
+            <div className="flex-1 p-2">
+              <table className="w-full text-[8px]">
+                <thead><tr className={`${t.f} border-b border-zinc-100 dark:border-white/[0.04]`}><th className="text-left py-1 px-1">id</th><th className="text-left py-1 px-1">description</th><th className="text-left py-1 px-1">isDone</th></tr></thead>
+                <tbody className={t.m}>
+                  <tr className="border-b border-zinc-50 dark:border-white/[0.02]"><td className="py-1 px-1">1</td><td className="py-1 px-1">Buy groceries</td><td className="py-1 px-1">false</td></tr>
+                  <tr className="border-b border-zinc-50 dark:border-white/[0.02]"><td className="py-1 px-1">2</td><td className="py-1 px-1">Deploy app</td><td className="py-1 px-1">true</td></tr>
+                  <tr><td className="py-1 px-1">3</td><td className="py-1 px-1">Write tests</td><td className="py-1 px-1">false</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+  if (type === 'seed') return (
+    <div className="p-5 flex flex-col items-center justify-center h-full min-h-[280px]">
+      <div className="w-14 h-14 mb-4 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.5" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div className={`text-[14px] font-semibold ${t.h} mb-1`}>Database Seeded</div>
+      <div className={`text-[11px] ${t.m} mb-4`}>Test data ready for development</div>
+      <div className="grid grid-cols-3 gap-3 text-center">
+        <div className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.05]">
+          <div className={`text-[16px] font-bold ${t.h}`}>3</div>
+          <div className={`text-[9px] ${t.f}`}>Users</div>
+        </div>
+        <div className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.05]">
+          <div className={`text-[16px] font-bold ${t.h}`}>12</div>
+          <div className={`text-[9px] ${t.f}`}>Tasks</div>
+        </div>
+        <div className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-white/[0.03] border border-zinc-100 dark:border-white/[0.05]">
+          <div className={`text-[16px] font-bold ${t.h}`}>1</div>
+          <div className={`text-[9px] ${t.f}`}>Seed fn</div>
+        </div>
+      </div>
+    </div>
+  )
+  if (type === 'build') return (
+    <div className="p-5 min-h-[280px]">
+      <div className={`text-[11px] font-semibold ${t.accent} mb-3`}>Build output</div>
+      <div className="space-y-2">
+        {[
+          { label: 'React SPA', size: '142 kB', bar: 65, color: 'bg-purple-400' },
+          { label: 'CSS bundle', size: '7.5 kB', bar: 15, color: 'bg-blue-400' },
+          { label: 'Server bundle', size: '89 kB', bar: 40, color: 'bg-emerald-400' },
+          { label: 'Dockerfile', size: '1.2 kB', bar: 5, color: 'bg-orange-400' },
+        ].map(b => (
+          <div key={b.label}>
+            <div className="flex justify-between mb-1">
+              <span className={`text-[10px] font-medium ${t.p}`}>{b.label}</span>
+              <span className={`text-[10px] font-mono ${t.f}`}>{b.size} gzip</span>
+            </div>
+            <div className="h-1.5 rounded-full bg-zinc-100 dark:bg-white/[0.06] overflow-hidden">
+              <div className={`h-full rounded-full ${b.color}/60`} style={{ width: `${b.bar}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 flex items-center gap-2">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span className={`text-[10px] ${t.m}`}>Ready for deployment</span>
+      </div>
+    </div>
+  )
+  if (type === 'deploy') return (
+    <div className="p-5 min-h-[280px]">
+      <div className="rounded-lg border border-zinc-200 dark:border-white/[0.06] overflow-hidden mb-3">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-zinc-50 dark:bg-white/[0.02] border-b border-zinc-100 dark:border-white/[0.04]">
+          <div className="flex gap-1"><div className="w-2 h-2 rounded-full bg-red-400/60"/><div className="w-2 h-2 rounded-full bg-yellow-400/60"/><div className="w-2 h-2 rounded-full bg-green-400/60"/></div>
+          <div className={`flex-1 text-center text-[9px] font-mono ${t.f}`}>my-app-client.fly.dev</div>
+        </div>
+        <div className="p-4 bg-white dark:bg-zinc-900/50 text-center">
+          <div className="w-8 h-8 mx-auto mb-2 rounded-lg bg-emerald-100 dark:bg-emerald-500/10 flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div className={`text-[12px] font-semibold ${t.h}`}>App is live!</div>
+          <div className={`text-[10px] ${t.m} mt-0.5`}>SSL enabled, all services running</div>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-[9px] text-center">
+        <div className={`px-2 py-1.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20`}>Client</div>
+        <div className={`px-2 py-1.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20`}>Server</div>
+        <div className={`px-2 py-1.5 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20`}>Database</div>
+      </div>
+    </div>
+  )
+  if (type === 'clean') return (
+    <div className="p-5 flex flex-col items-center justify-center h-full min-h-[280px]">
+      <div className="w-14 h-14 mb-4 rounded-xl bg-zinc-100 dark:bg-white/[0.06] flex items-center justify-center">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className={t.m}><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      </div>
+      <div className={`text-[14px] font-semibold ${t.h} mb-1`}>Project Cleaned</div>
+      <div className={`text-[11px] ${t.m} mb-4 text-center`}>Fresh start — run <code className="font-mono text-wasp-600 dark:text-wasp-400">wasp start</code> to rebuild</div>
+      <div className="flex flex-wrap justify-center gap-2 text-[9px]">
+        {['.wasp/out/', '.wasp/build/', 'node_modules/', '.wasp/cache/'].map(p => (
+          <span key={p} className={`px-2 py-1 rounded-md bg-zinc-50 dark:bg-white/[0.03] ${t.f} border border-zinc-100 dark:border-white/[0.05] line-through`}>{p}</span>
+        ))}
+      </div>
+    </div>
+  )
+  return null
+}
+
+function CLIDemo() {
+  const [activeStep, setActiveStep] = useState(0)
+  const [typedCmd, setTypedCmd] = useState('')
+  const [showOutput, setShowOutput] = useState(false)
+  const [isTyping, setIsTyping] = useState(true)
+  const timeoutRef = useRef(null)
+  const intervalRef = useRef(null)
+
+  const step = cliDemoSteps[activeStep]
+
+  const startTyping = useCallback((stepIndex) => {
+    const cmd = cliDemoSteps[stepIndex].cmd
+    setTypedCmd('')
+    setShowOutput(false)
+    setIsTyping(true)
+
+    let i = 0
+    intervalRef.current = setInterval(() => {
+      i++
+      setTypedCmd(cmd.slice(0, i))
+      if (i >= cmd.length) {
+        clearInterval(intervalRef.current)
+        timeoutRef.current = setTimeout(() => {
+          setShowOutput(true)
+          setIsTyping(false)
+        }, 400)
+      }
+    }, 35)
+  }, [])
+
+  useEffect(() => {
+    startTyping(activeStep)
+    return () => {
+      clearInterval(intervalRef.current)
+      clearTimeout(timeoutRef.current)
+    }
+  }, [activeStep, startTyping])
+
+  // Auto-advance
+  useEffect(() => {
+    if (!showOutput) return
+    const timer = setTimeout(() => {
+      setActiveStep(prev => (prev + 1) % cliDemoSteps.length)
+    }, 4000)
+    return () => clearTimeout(timer)
+  }, [showOutput])
+
+  return (
+    <section className={`py-28 md:py-36 border-t ${t.sec}`}>
+      <div className="max-w-[1200px] mx-auto px-6">
+        <div className="text-center mb-12">
+          <span className={`text-[11px] font-semibold ${t.accent} uppercase tracking-[0.15em] mb-3 block`}>CLI</span>
+          <h2 className={`text-3xl md:text-[2.5rem] font-bold tracking-tight ${t.h} mb-4`}>One CLI to rule them all</h2>
+          <p className={`${t.m} max-w-lg mx-auto text-[15px]`}>Install to deploy — every step handled by a single command.</p>
+        </div>
+
+        {/* Step selector */}
+        <div className="flex flex-wrap justify-center gap-1.5 mb-8">
+          {cliDemoSteps.map((s, i) => (
+            <button key={i} onClick={() => setActiveStep(i)}
+              className={`px-2.5 py-1.5 rounded-lg text-[11px] font-mono cursor-pointer transition-all ${activeStep === i
+                ? 'bg-wasp-100 dark:bg-wasp-400/10 text-wasp-700 dark:text-wasp-400 border border-wasp-200 dark:border-wasp-400/20'
+                : `bg-zinc-100 dark:bg-white/[0.04] ${t.f} border border-transparent hover:border-zinc-200 dark:hover:border-white/[0.08]`
+              }`}>
+              {s.cmd.split(' ').slice(0, s.cmd.startsWith('curl') ? 1 : 3).join(' ')}
+            </button>
+          ))}
+        </div>
+
+        {/* Main demo area */}
+        <div className="max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {/* Left: Browser preview */}
+            <div className="gradient-border noise-overlay rounded-2xl bg-white dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
+              <div className="flex items-center gap-2 border-b border-zinc-100 dark:border-white/[0.05] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400/20 dark:bg-red-500/20" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400/20 dark:bg-yellow-500/20" />
+                  <div className="w-3 h-3 rounded-full bg-green-400/20 dark:bg-green-500/20" />
+                </div>
+                <span className={`text-[11px] font-medium ${t.m} ml-2`}>Preview</span>
+              </div>
+              <CLIDemoBrowserContent type={step.browserContent} />
+            </div>
+
+            {/* Right: Terminal */}
+            <div className="gradient-border noise-overlay rounded-2xl bg-zinc-900 dark:bg-surface-1 shadow-xl dark:shadow-2xl shadow-amber-900/5 dark:shadow-black/40 overflow-hidden">
+              <div className="flex items-center gap-2 border-b border-white/[0.06] px-4 py-2.5">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-500/30" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/30" />
+                  <div className="w-3 h-3 rounded-full bg-green-500/30" />
+                </div>
+                <span className="text-[11px] font-medium text-zinc-500 ml-2">Terminal</span>
+              </div>
+              <div className="p-4 font-mono text-[11px] leading-[1.7] min-h-[280px] overflow-hidden">
+                <div className="flex">
+                  <span className="text-emerald-400 mr-2 select-none">$</span>
+                  <span className="text-zinc-100">{typedCmd}</span>
+                  {isTyping && <span className="inline-block w-[7px] h-[14px] bg-zinc-400 ml-0.5 animate-pulse" />}
+                </div>
+                {showOutput && (
+                  <pre className="text-zinc-500 mt-2 whitespace-pre-wrap cli-demo-fade-in">{step.terminalOutput}</pre>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className={`text-center mt-6 text-[13px] ${t.p} max-w-2xl mx-auto leading-relaxed cli-demo-fade-in`}>
+            <code className={`font-mono ${t.accent} bg-wasp-50 dark:bg-wasp-400/10 px-1.5 py-0.5 rounded text-[12px]`}>{step.cmd.length > 40 ? step.cmd.slice(0, 40) + '...' : step.cmd}</code>
+            <span className="mx-2">—</span>
+            {step.description}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function InstallCommand() {
   const [copied, setCopied] = useState(false)
   const cmd = 'npm i -g @wasp.sh/wasp-cli@latest'
@@ -1372,6 +1928,9 @@ $ <span class="tk-fn">/expert-advice</span>       <span class="tk-cmt">Wasp-spec
 
       {/* ── 8b. Architecture Diagram ── */}
       <ArchitectureDiagram />
+
+      {/* ── 8c. CLI Demo ── */}
+      <CLIDemo />
 
       {/* ── 9. Install ── */}
       <InstallCommand />

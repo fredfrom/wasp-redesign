@@ -27,7 +27,21 @@
       "Bash(wasp build:*)",
       "Bash(npm install:*)",
       "Bash(npx vite:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(curl -s -o /dev/null -w \"index.html: %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/)",
+      "Bash(curl -s -o /dev/null -w \"JS bundle: %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/assets/index-C78QYRth.js)",
+      "Bash(curl -s -o /dev/null -w \"CSS bundle: %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/assets/index-B09OwLJ9.css)",
+      "Bash(curl -sI http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/)",
+      "Bash(curl -s http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/assets/index-C78QYRth.js)",
+      "Bash(curl -s http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/)",
+      "Bash(grep -oE '.{0,80}localhost:3001.{0,80}')",
+      "Bash(grep -oE '.{0,80}/api/.{0,80}')",
+      "Bash(grep -oE '.{0,100}REACT_APP_API_URL.{0,100}')",
+      "Bash(grep -oE '.{0,50}function Rx.{0,200}')",
+      "Bash(grep -oE '.{0,80}apiUrl.{0,80}')",
+      "Bash(grep -oE '.{0,60}\\(xm\\\\.get|xm\\\\.post|xm\\\\.request|interceptors\\).{0,100}')",
+      "Bash(grep -oE 'interceptors\\\\.response\\\\.use.{0,500}')",
+      "Bash(wasp:*)"
     ]
   }
 }

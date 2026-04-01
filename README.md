@@ -2,6 +2,8 @@
 
 > **This is not an official Wasp project.** It is an unofficial community contribution exploring a redesigned landing page for Wasp. It is not affiliated with or endorsed by the Wasp team.
 
+**[Live Demo](http://jzib87h2meabr0g0w6tpiznl.152.53.230.125.sslip.io/)**
+
 ## About
 
 A redesigned landing page concept for [Wasp](https://wasp-lang.dev), the full-stack React & Node.js framework. Built with Wasp itself to showcase the developer experience.
